@@ -5,7 +5,7 @@ from Configuration import Configuration
 def client_program():
     config = Configuration('server.conf')
 
-    host = socket.gethostname()
+    host = config.get_server_name()
     port = config.get_port()
 
     client_socket = socket.socket()

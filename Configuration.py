@@ -13,3 +13,9 @@ class Configuration:
 
     def get_port(self):
         return int(self.default_section['port'])
+
+    def get_hostname(self):
+        return self.default_section['hostname']
+
+    def get_server_name(self):
+        return self.default_section['server_name']

@@ -34,7 +34,7 @@ def run():
     max_room_size = config.get_room_size()
 
     server_socket = socket.socket()
-    server_socket.bind((socket.gethostname(), config.get_port()))
+    server_socket.bind((config.get_hostname(), config.get_port()))
     server_socket.listen(max_room_size)
 
     print("Await " + str(max_room_size) + " connections...")
