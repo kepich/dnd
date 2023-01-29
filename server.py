@@ -34,7 +34,7 @@ def run():
     max_room_size = config.get_room_size()
 
     server_socket = socket.socket()
-    server_socket.bind((config.get_hostname(), config.get_port()))
+    server_socket.bind((config.get_server_name(), config.get_port()))
     server_socket.listen(max_room_size)
 
     print("Await " + str(max_room_size) + " connections...")
@@ -52,8 +52,8 @@ def run():
         received_data = receive_data(connections)
         broadcast_data(connections, received_data)
 
-        if input() == "exit":
-            break
+        # if input() == "exit":
+        #     break
 
     for connection in connections:
         connection[0].close()  # close the connections
