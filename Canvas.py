@@ -1,7 +1,7 @@
 from enum import Enum
 
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QPixmap, QColor, QPainter, QWheelEvent
+from PyQt6.QtGui import QPixmap, QColor, QPainter, QWheelEvent, QMouseEvent
 from PyQt6.QtWidgets import QLabel, QApplication
 
 from DrawableObject import DrawableObject
@@ -33,6 +33,9 @@ class Canvas(QLabel):
         self.objects = []
         self.last_draw = None
 
+        self.x_offset = 0
+        self.y_offset = 0
+
         self.edit_mode = EditMode.DRAW
 
         self.setStyleSheet("border: 1px solid black;")
@@ -48,19 +51,21 @@ class Canvas(QLabel):
         self.setPixmap(pixmap)
 
     def mouseMoveEvent(self, e):
-        if self.edit_mode is EditMode.DRAW:
-            self.draw_action(e)
-        elif self.edit_mode is EditMode.MOVE:
-            self.move_action(e)
-        elif self.edit_mode is EditMode.RESIZE:
-            self.resize_action(e)
+        if e.buttons() == Qt.MouseButton.LeftButton:
+            if self.edit_mode is EditMode.DRAW:
+                self.draw_action(e)
+            elif self.edit_mode is EditMode.MOVE:
+                self.move_action(e)
+            elif self.edit_mode is EditMode.RESIZE:
+                self.resize_action(e)
+        elif e.buttons() == Qt.MouseButton.MiddleButton:
+            self.fov_moving_action(e)
 
     def draw_action(self, e):
         if self.last_x is None:
             self.last_x = e.position().x()
             self.last_y = e.position().y()
             self.paintingActive()
-            print(self.MEASURE_MULTIPLIER)
             self.last_draw = DrawableObject(
                 e.position().x(),
                 e.position().x(),
@@ -165,7 +170,6 @@ class Canvas(QLabel):
         numSteps = numDegrees / 15
 
         self.MEASURE_MULTIPLIER = min(2.0, max(0.45, self.MEASURE_MULTIPLIER + numSteps))
-        print(self.MEASURE_MULTIPLIER)
         self.clear_all()
         self.redraw()
         event.accept()
@@ -195,7 +199,6 @@ class Canvas(QLabel):
         painter.begin(pixmap)
 
         for pm in self.objects:
-            print(str(pm.q_rect) + " -> " + str(pm.get_projected_rect(self.MEASURE_MULTIPLIER)))
             painter.drawPixmap(pm.get_projected_rect(self.MEASURE_MULTIPLIER), pm.pixmap)
         painter.end()
         self.setPixmap(pixmap)
@@ -209,3 +212,18 @@ class Canvas(QLabel):
 
     def original_cord(self, v):
         return v / self.MEASURE_MULTIPLIER
+
+    def fov_moving_action(self, e):
+        if self.last_x is None:
+            self.last_x = e.position().x()
+            self.last_y = e.position().y()
+            return
+
+        if self.last_draw is not None:
+            self.x_offset = self.x_offset + e.position().x() - self.last_x
+            self.y_offset = self.y_offset + e.position().y() - self.last_y
+            self.clear_all()
+            self.redraw()
+
+        self.last_x = e.position().x()
+        self.last_y = e.position().y()
