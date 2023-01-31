@@ -11,7 +11,7 @@ class ClientWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("DnD")
-        self.showFullScreen()
+        # self.showFullScreen()
 
         self.playground = Playground(self)
         self.setCentralWidget(self.playground)
@@ -29,6 +29,7 @@ class ClientWindow(QMainWindow):
         tool_bar.addAction(self.clearCanvasAction)
         tool_bar.addAction(self.undoAction)
         tool_bar.addAction(self.pasteAction)
+        tool_bar.addAction(self.exitAction)
 
         self.addToolBar(Qt.ToolBarArea.LeftToolBarArea, tool_bar)
 
@@ -61,6 +62,10 @@ class ClientWindow(QMainWindow):
         self.clearCanvasAction = QWidgetAction(self)
         self.clearCanvasAction.triggered.connect(self.playground.canvas.clear_canvas)
         self.clearCanvasAction.setText("Clear all")
+
+        self.exitAction = QWidgetAction(self)
+        self.exitAction.triggered.connect(self.exit_action)
+        self.exitAction.setText("Exit")
 
     def set_mode_move(self):
         print("EDIT MODE: MOVE")
@@ -96,6 +101,9 @@ class ClientWindow(QMainWindow):
     def undo(self):
         print("ACTION: UNDO")
         self.playground.canvas.undo()
+
+    def exit_action(self):
+        self.close()
 
     def enable_menu_buttons(self):
         self.moveAction.setEnabled(True)

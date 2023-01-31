@@ -46,17 +46,3 @@ class DrawableObject:
     def is_collide(self, x, y):
         return self.q_rect.x() < x < self.q_rect.x() + self.q_rect.width() and \
             self.q_rect.y() < y < self.q_rect.y() + self.q_rect.height()
-
-    def get_projected_rect(self, measure):
-        projected = QRect()
-
-        projected.setX(self.q_rect.x() * measure)
-        projected.setRight(self.q_rect.right() * measure)
-
-        projected.setWidth(self.q_rect.width() * measure)
-        projected.setHeight(self.q_rect.height() * measure)
-
-        projected.setY(self.q_rect.y() * measure)
-        projected.setBottom(self.q_rect.bottom() * measure)
-
-        return projected
