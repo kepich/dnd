@@ -47,7 +47,7 @@ class Canvas(QLabel):
 
     def clear_all(self):
         pixmap = QPixmap(self.MAX_WIDTH, self.MAX_HEIGHT)
-        pixmap.fill(Qt.GlobalColor.transparent)
+        pixmap.fill(Qt.GlobalColor.lightGray)
         self.setPixmap(pixmap)
 
     def mouseMoveEvent(self, e):
@@ -157,8 +157,8 @@ class Canvas(QLabel):
         self.last_draw = None
 
     def get_collide_candidate(self, e):
-        return next(filter(lambda obj: obj.is_collide(self.get_absolute(e.position().x()),
-                                                      self.get_absolute(e.position().y())),
+        return next(filter(lambda obj: obj.is_collide(-self.x_offset + self.get_absolute(e.position().x()),
+                                                      -self.y_offset + self.get_absolute(e.position().y())),
                            self.objects), None)
 
     def wheelEvent(self, event: QWheelEvent) -> None:
@@ -184,10 +184,14 @@ class Canvas(QLabel):
         mimeData.imageData()
         if mimeData.hasImage():
             self.clear_all()
-            new_object = DrawableObject(0, 0, 0, 0, QPixmap(1, 1))
-            new_object.fromPixmapOnly(self.get_absolute(x_pos),
-                                      self.get_absolute(y_pos),
-                                      QPixmap(mimeData.imageData()))
+            pixmap = QPixmap(mimeData.imageData())
+            new_object = DrawableObject(self.x_offset + self.get_absolute(x_pos),
+                                        self.x_offset + self.get_absolute(x_pos) + pixmap.width(),
+                                        self.y_offset + self.get_absolute(y_pos),
+                                        self.y_offset + self.get_absolute(y_pos) + pixmap.height(),
+                                        QPixmap(1, 1))
+            new_object.pixmap = pixmap
+
             self.objects.append(new_object)
             self.redraw()
 
@@ -199,6 +203,7 @@ class Canvas(QLabel):
         for pm in self.objects:
             painter.drawPixmap(self.project(pm), pm.pixmap)
         painter.end()
+
         self.setPixmap(pixmap)
 
     def clear_canvas(self):
@@ -243,3 +248,6 @@ class Canvas(QLabel):
         projected.setBottom(self.get_relative(drawable_object.q_rect.bottom() + self.y_offset))
 
         return projected
+
+    def draw_grid(self, pixmap):
+        pass
