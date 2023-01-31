@@ -1,6 +1,6 @@
 from enum import Enum
 
-from PyQt6.QtCore import Qt, QRect
+from PyQt6.QtCore import Qt, QRect, QSize
 from PyQt6.QtGui import QPixmap, QColor, QPainter, QWheelEvent
 from PyQt6.QtWidgets import QLabel, QApplication
 
@@ -25,20 +25,20 @@ class Canvas(QLabel):
     def __init__(self, parent=None):
         super().__init__()
 
-        if parent is not None:
-            self.setParent(parent)
+        self.setParent(parent)
 
         self.last_x, self.last_y = None, None
         self.pen_color = QColor('#000000')
         self.objects = []
         self.last_draw = None
 
+        self.MAX_WIDTH = self.geometry().width()
+        self.MAX_HEIGHT = self.geometry().height()
+
         self.x_offset = 0
         self.y_offset = 0
 
         self.edit_mode = EditMode.DRAW
-
-        self.setStyleSheet("border: 1px solid black;")
 
         self.clear_all()
 
@@ -225,8 +225,8 @@ class Canvas(QLabel):
             self.last_y = e.position().y()
             return
 
-        self.x_offset = self.x_offset + self.get_absolute(e.position().x() - self.last_x)
-        self.y_offset = self.y_offset + self.get_absolute(e.position().y() - self.last_y)
+        self.x_offset = max(-self.MAX_WIDTH, min(0, self.x_offset + self.get_absolute(e.position().x() - self.last_x)))
+        self.y_offset = max(-self.MAX_HEIGHT, min(0, self.y_offset + self.get_absolute(e.position().y() - self.last_y)))
         self.clear_all()
         self.redraw()
 

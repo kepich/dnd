@@ -1,5 +1,5 @@
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QMainWindow, QWidgetAction, QToolBar
+from PyQt6.QtWidgets import QMainWindow, QWidgetAction, QToolBar, QHBoxLayout
 from PyQt6.QtGui import QKeyEvent, QCursor
 
 from Canvas import EditMode
@@ -11,7 +11,7 @@ class ClientWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("DnD")
-        # self.showFullScreen()
+        self.showFullScreen()
 
         self.playground = Playground(self)
         self.setCentralWidget(self.playground)

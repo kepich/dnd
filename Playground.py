@@ -1,5 +1,5 @@
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QScrollArea
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 
 from Canvas import Canvas
 from ColorPalette import *
@@ -8,13 +8,11 @@ from ColorPalette import *
 class Playground(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("DnD")
-        self.setGeometry(parent.geometry())
 
-        self.canvas = Canvas()
+        self.setFixedSize(QSize(1000, 800))
+        self.setStyleSheet("border: 1px solid black;")
 
-        self.scrollArea = QScrollArea()
-        self.scrollArea.setWidget(self.canvas)
+        self.canvas = Canvas(self)
 
         self.create_palette_widget()
 
@@ -22,7 +20,7 @@ class Playground(QWidget):
         vertical_layout = QVBoxLayout()
         self.setLayout(vertical_layout)
         vertical_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        vertical_layout.addWidget(self.scrollArea)
+        vertical_layout.addWidget(self.canvas)
         palette = QHBoxLayout()
         self.add_palette_buttons(palette)
         vertical_layout.addLayout(palette)
