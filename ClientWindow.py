@@ -1,5 +1,6 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QMainWindow, QWidgetAction, QToolBar
+from PyQt6.QtGui import QKeyEvent, QCursor
 
 from Canvas import EditMode
 from Playground import Playground
@@ -10,7 +11,7 @@ class ClientWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("DnD")
-        self.setGeometry(100, 100, 600, 400)
+        self.showFullScreen()
 
         self.playground = Playground(self)
         self.setCentralWidget(self.playground)
@@ -27,13 +28,18 @@ class ClientWindow(QMainWindow):
         tool_bar.addAction(self.drawAction)
         tool_bar.addAction(self.clearCanvasAction)
         tool_bar.addAction(self.undoAction)
+        tool_bar.addAction(self.pasteAction)
 
         self.addToolBar(Qt.ToolBarArea.LeftToolBarArea, tool_bar)
 
     def create_toolbar_actions(self):
         self.undoAction = QWidgetAction(self)
         self.undoAction.setText("Undo")
-        self.undoAction.triggered.connect(self.set_undo)
+        self.undoAction.triggered.connect(self.undo)
+
+        self.pasteAction = QWidgetAction(self)
+        self.pasteAction.setText("Paste")
+        self.pasteAction.triggered.connect(self.paste)
 
         self.moveAction = QWidgetAction(self)
         self.moveAction.setText("Move")
@@ -83,8 +89,12 @@ class ClientWindow(QMainWindow):
         self.enable_menu_buttons()
         self.drawAction.setEnabled(False)
 
-    def set_undo(self):
-        print("EDIT MODE: UNDO")
+    def paste(self):
+        print("ACTION: PASTE")
+        self.playground.canvas.paste()
+
+    def undo(self):
+        print("ACTION: UNDO")
         self.playground.canvas.undo()
 
     def enable_menu_buttons(self):
@@ -94,3 +104,9 @@ class ClientWindow(QMainWindow):
         self.drawAction.setEnabled(True)
         self.clearCanvasAction.setEnabled(True)
         self.undoAction.setEnabled(True)
+
+    def keyPressEvent(self, ev: QKeyEvent) -> None:
+        if ev.modifiers() & Qt.KeyboardModifier.ControlModifier:
+            if ev.key() == Qt.Key.Key_V:
+                point = self.mapFromParent(QCursor.pos())
+                self.playground.canvas.paste(x_pos=point.x(), y_pos=point.y())
