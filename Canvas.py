@@ -1,7 +1,6 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor, QPainter, QWheelEvent
 from PyQt6.QtWidgets import QLabel, QApplication, QSizePolicy
-from PyQt6.uic.properties import QtGui
 
 from Camera import Camera
 from EditModeEnum import EditMode
@@ -17,9 +16,8 @@ class Canvas(QLabel):
         super().__init__()
 
         self.setParent(parent)
+        self.isGridVisible = True
 
-        # self.setMaximumSize(2400, 1800)
-        # self.setFixedWidth(1200)
         self.sizePolicy().setHorizontalPolicy(QSizePolicy.Policy.Maximum)
 
 
@@ -116,7 +114,6 @@ class Canvas(QLabel):
         numSteps = numDegrees / 15
         self.camera.updateMeasure(numSteps)
         self.redraw()
-        event.accept()
 
     def undo(self):
         if len(self.objects) > 0:
@@ -181,7 +178,8 @@ class Canvas(QLabel):
             painter.drawPixmap(self.camera.project(pm), pm.pixmap)
         painter.end()
 
-        self.drawGrid(pixmap)
+        if self.isGridVisible:
+            self.drawGrid(pixmap)
         self.setPixmap(pixmap)
 
     def clearAll(self):
@@ -192,4 +190,8 @@ class Canvas(QLabel):
     def resizeEvent(self, a0) -> None:
         self.camera.MAX_HEIGHT = self.parent().height() - 100
         self.camera.MAX_WIDTH = self.parent().width() - self.parent().rightPanel.width() - 50
+        self.redraw()
+
+    def setGridVisibility(self, status):
+        self.isGridVisible = status
         self.redraw()
