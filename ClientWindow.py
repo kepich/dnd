@@ -2,7 +2,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QMainWindow, QWidgetAction, QToolBar, QHBoxLayout
 from PyQt6.QtGui import QKeyEvent, QCursor
 
-from Canvas import EditMode
+from EditModeEnum import EditMode
 from Playground import Playground
 
 
@@ -60,7 +60,7 @@ class ClientWindow(QMainWindow):
         self.drawAction.setEnabled(False)
 
         self.clearCanvasAction = QWidgetAction(self)
-        self.clearCanvasAction.triggered.connect(self.playground.canvas.clear_canvas)
+        self.clearCanvasAction.triggered.connect(self.playground.canvas.clearCanvasAction)
         self.clearCanvasAction.setText("Clear all")
 
         self.exitAction = QWidgetAction(self)
@@ -69,28 +69,28 @@ class ClientWindow(QMainWindow):
 
     def set_mode_move(self):
         print("EDIT MODE: MOVE")
-        self.playground.canvas.set_mode(EditMode.MOVE)
+        self.playground.canvas.edit_mode = EditMode.MOVE
         self.enable_menu_buttons()
         self.moveAction.setEnabled(False)
         self.undoAction.setEnabled(False)
 
     def set_mode_resize(self):
         print("EDIT MODE: RESIZE")
-        self.playground.canvas.set_mode(EditMode.RESIZE)
+        self.playground.canvas.edit_mode = EditMode.RESIZE
         self.enable_menu_buttons()
         self.resizeAction.setEnabled(False)
         self.undoAction.setEnabled(False)
 
     def set_mode_delete(self):
         print("EDIT MODE: DELETE")
-        self.playground.canvas.set_mode(EditMode.DELETE)
+        self.playground.canvas.edit_mode = EditMode.DELETE
         self.enable_menu_buttons()
         self.deleteAction.setEnabled(False)
         self.undoAction.setEnabled(False)
 
     def set_mode_draw(self):
         print("EDIT MODE: DRAW")
-        self.playground.canvas.set_mode(EditMode.DRAW)
+        self.playground.canvas.edit_mode = EditMode.DRAW
         self.enable_menu_buttons()
         self.drawAction.setEnabled(False)
 

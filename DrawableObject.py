@@ -10,6 +10,11 @@ class DrawableObject:
         self.pixmap = pixmap
         self.pixmap.fill(Qt.GlobalColor.transparent)
 
+    def from_pixmap_and_offset(self, pixmap, x_offset, y_offset):
+        self.q_rect = QRect(pixmap.rect())
+        self.pixmap = pixmap
+        self.move(x_offset, y_offset)
+
     def fit(self, x, y, line_width):
         self.q_rect.setX(min(self.q_rect.x(), x - line_width))
         self.q_rect.setWidth(max(self.q_rect.x() + self.q_rect.width(), x + line_width) - self.q_rect.x())

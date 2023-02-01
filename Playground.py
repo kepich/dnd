@@ -14,19 +14,19 @@ class Playground(QWidget):
 
         self.canvas = Canvas(self)
 
-        self.create_palette_widget()
+        self.createPaletteWidget()
 
-    def create_palette_widget(self):
+    def createPaletteWidget(self):
         vertical_layout = QVBoxLayout()
         self.setLayout(vertical_layout)
         vertical_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         vertical_layout.addWidget(self.canvas)
         palette = QHBoxLayout()
-        self.add_palette_buttons(palette)
+        self.addPaletteButtons(palette)
         vertical_layout.addLayout(palette)
 
-    def add_palette_buttons(self, layout):
+    def addPaletteButtons(self, layout):
         for c in COLORS:
             b = QPaletteButton(c)
-            b.pressed.connect(lambda c=c: self.canvas.set_pen_color(c))
+            b.pressed.connect(lambda c=c: self.canvas.setPenColor(c))
             layout.addWidget(b)
