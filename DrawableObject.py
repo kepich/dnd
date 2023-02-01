@@ -1,4 +1,5 @@
 from PyQt6.QtCore import Qt, QRect
+import uuid
 
 
 class DrawableObject:
@@ -6,7 +7,7 @@ class DrawableObject:
 
     def __init__(self, x_min, x_max, y_min, y_max, pixmap):
         self.q_rect = QRect(x_min, y_min, x_max - x_min, y_max - y_min)
-
+        self.uuid = uuid.uuid1()
         self.pixmap = pixmap
         self.pixmap.fill(Qt.GlobalColor.transparent)
 

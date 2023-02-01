@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import QLabel, QApplication, QSizePolicy
 
 from Camera import Camera
 from EditModeEnum import EditMode
+from LocalProxy import LocalProxy
 from UpdateLastDecorator import *
 
 LINE_WIDTH = 4
@@ -20,13 +21,14 @@ class Canvas(QLabel):
 
         self.sizePolicy().setHorizontalPolicy(QSizePolicy.Policy.Maximum)
 
-
         self.last_x, self.last_y = None, None
         self.pen_color = QColor('#000000')
         self.objects = []
         self.last_draw = None
 
         self.camera = Camera(self.width(), self.height())
+
+        self.networkProxy = LocalProxy()
 
         self.edit_mode = EditMode.DRAW
 
@@ -76,15 +78,17 @@ class Canvas(QLabel):
     @update_last(get_collide)
     def moveAction(self, e):
         if self.last_draw is not None:
-            self.last_draw.move(self.camera.abs(e.position().x() - self.last_x),
-                                self.camera.abs(e.position().y() - self.last_y))
+            self.networkProxy.move(self.last_draw,
+                                   self.camera.abs(e.position().x() - self.last_x),
+                                   self.camera.abs(e.position().y() - self.last_y))
             self.redraw()
 
     @update_last(get_collide)
     def resizeAction(self, e):
         if self.last_draw is not None:
-            self.last_draw.resize(self.camera.abs(e.position().x() - self.last_x),
-                                  self.camera.abs(e.position().y() - self.last_y))
+            self.networkProxy.resize(self.last_draw,
+                                     self.camera.abs(e.position().x() - self.last_x),
+                                     self.camera.abs(e.position().y() - self.last_y))
             self.redraw()
 
     @update_last(get_none)
@@ -97,12 +101,12 @@ class Canvas(QLabel):
             self.last_draw.fit_pixmap()
             self.last_draw.move(-self.camera.x_offset, -self.camera.y_offset)
 
-            self.objects.append(self.last_draw)
+            self.networkProxy.create(self.objects, self.last_draw)
             self.redraw()
         elif self.edit_mode is EditMode.DELETE:
             delete_candidate = self.camera.getCollide(e.position().x(), e.position().y(), self.objects)
             if delete_candidate is not None:
-                self.objects.remove(delete_candidate)
+                self.networkProxy.remove(self.objects, delete_candidate)
                 self.redraw()
 
         self.last_x = None
@@ -117,32 +121,31 @@ class Canvas(QLabel):
 
     def undo(self):
         if len(self.objects) > 0:
-            self.objects = self.objects[:-1]
+            self.networkProxy.remove(self.objects, self.objects[-1])
 
         self.redraw()
 
     def paste(self, x_pos=0, y_pos=0):
         clipboard = QApplication.clipboard()
         mimeData = clipboard.mimeData()
-        mimeData.imageData()
         if mimeData.hasImage():
             pixmap = QPixmap(mimeData.imageData())
 
-            new_object = DrawableObject(self.camera.abs(x_pos),
-                                        self.camera.abs(x_pos) + pixmap.width(),
-                                        self.camera.abs(y_pos),
-                                        self.camera.abs(y_pos) + pixmap.height(),
-                                        QPixmap(1, 1))
+            self.last_draw = DrawableObject(self.camera.abs(x_pos),
+                                            self.camera.abs(x_pos) + pixmap.width(),
+                                            self.camera.abs(y_pos),
+                                            self.camera.abs(y_pos) + pixmap.height(),
+                                            QPixmap(1, 1))
 
-            new_object.from_pixmap_and_offset(pixmap,
+            self.last_draw.from_pixmap_and_offset(pixmap,
                                               self.camera.x_abs(x_pos),
                                               self.camera.y_abs(y_pos))
 
-            self.objects.append(new_object)
+            self.networkProxy.create(self.objects, self.last_draw)
             self.redraw()
 
     def clearCanvasAction(self):
-        self.objects.clear()
+        self.networkProxy.clear(self.objects)
         self.redraw()
 
     def drawGrid(self, pixmap):
@@ -195,3 +198,6 @@ class Canvas(QLabel):
     def setGridVisibility(self, status):
         self.isGridVisible = status
         self.redraw()
+
+    def updateFromNetwork(self, msg):
+        print("RECIEVED: " + str(msg))

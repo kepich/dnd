@@ -1,8 +1,13 @@
+import sys
+
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QKeyEvent, QCursor
 from PyQt6.QtWidgets import QMainWindow, QWidgetAction, QToolBar
 
 from EditModeEnum import EditMode
+from EnterDialog import EnterDialog
+from LocalProxy import LocalProxy
+from NetworkProxy import NetworkProxy
 from Playground import Playground
 
 
@@ -28,6 +33,8 @@ class ClientWindow(QMainWindow):
         tool_bar.addAction(self.drawAction)
         tool_bar.addAction(self.clearCanvasAction)
         tool_bar.addAction(self.undoAction)
+        tool_bar.addAction(self.connectAction)
+        tool_bar.addAction(self.disconnectAction)
         tool_bar.addAction(self.exitAction)
 
         self.addToolBar(Qt.ToolBarArea.LeftToolBarArea, tool_bar)
@@ -57,6 +64,15 @@ class ClientWindow(QMainWindow):
         self.clearCanvasAction = QWidgetAction(self)
         self.clearCanvasAction.triggered.connect(self.playground.canvas.clearCanvasAction)
         self.clearCanvasAction.setText("Clear all")
+
+        self.connectAction = QWidgetAction(self)
+        self.connectAction.triggered.connect(self.connect)
+        self.connectAction.setText("Connect")
+
+        self.disconnectAction = QWidgetAction(self)
+        self.disconnectAction.triggered.connect(self.disconnectSlot)
+        self.disconnectAction.setEnabled(False)
+        self.disconnectAction.setText("Disconnect")
 
         self.exitAction = QWidgetAction(self)
         self.exitAction.triggered.connect(self.close)
@@ -92,6 +108,24 @@ class ClientWindow(QMainWindow):
         self.drawAction.setEnabled(True)
         self.clearCanvasAction.setEnabled(True)
         self.undoAction.setEnabled(True)
+
+    def connect(self):
+        dlg = EnterDialog(self)
+        if dlg.exec():
+            print("Connecting")
+            canvas = self.playground.canvas
+            canvas.networkProxy = NetworkProxy()
+            canvas.networkProxy.socketClient.receivedSignal.connect(canvas.updateFromNetwork)
+
+            self.connectAction.setEnabled(False)
+            self.disconnectAction.setEnabled(True)
+
+    def disconnectSlot(self):
+        canvas = self.playground.canvas
+        canvas.networkProxy.socketClient.disconnect()
+        canvas.networkProxy = LocalProxy()
+        self.connectAction.setEnabled(True)
+        self.disconnectAction.setEnabled(False)
 
     def keyPressEvent(self, ev: QKeyEvent) -> None:
         if ev.modifiers() & Qt.KeyboardModifier.ControlModifier:
