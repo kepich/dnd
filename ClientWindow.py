@@ -1,6 +1,6 @@
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QMainWindow, QWidgetAction, QToolBar, QHBoxLayout
 from PyQt6.QtGui import QKeyEvent, QCursor
+from PyQt6.QtWidgets import QMainWindow, QWidgetAction, QToolBar
 
 from EditModeEnum import EditMode
 from Playground import Playground
@@ -11,12 +11,12 @@ class ClientWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("DnD")
-        self.showFullScreen()
 
         self.playground = Playground(self)
         self.setCentralWidget(self.playground)
 
         self.create_toolbar()
+        self.showFullScreen()
 
     def create_toolbar(self):
         self.create_toolbar_actions()
@@ -28,7 +28,6 @@ class ClientWindow(QMainWindow):
         tool_bar.addAction(self.drawAction)
         tool_bar.addAction(self.clearCanvasAction)
         tool_bar.addAction(self.undoAction)
-        tool_bar.addAction(self.pasteAction)
         tool_bar.addAction(self.exitAction)
 
         self.addToolBar(Qt.ToolBarArea.LeftToolBarArea, tool_bar)
@@ -36,11 +35,7 @@ class ClientWindow(QMainWindow):
     def create_toolbar_actions(self):
         self.undoAction = QWidgetAction(self)
         self.undoAction.setText("Undo")
-        self.undoAction.triggered.connect(self.undo)
-
-        self.pasteAction = QWidgetAction(self)
-        self.pasteAction.setText("Paste")
-        self.pasteAction.triggered.connect(self.paste)
+        self.undoAction.triggered.connect(self.playground.canvas.undo)
 
         self.moveAction = QWidgetAction(self)
         self.moveAction.setText("Move")
@@ -64,46 +59,31 @@ class ClientWindow(QMainWindow):
         self.clearCanvasAction.setText("Clear all")
 
         self.exitAction = QWidgetAction(self)
-        self.exitAction.triggered.connect(self.exit_action)
+        self.exitAction.triggered.connect(self.close)
         self.exitAction.setText("Exit")
 
     def set_mode_move(self):
-        print("EDIT MODE: MOVE")
         self.playground.canvas.edit_mode = EditMode.MOVE
         self.enable_menu_buttons()
         self.moveAction.setEnabled(False)
         self.undoAction.setEnabled(False)
 
     def set_mode_resize(self):
-        print("EDIT MODE: RESIZE")
         self.playground.canvas.edit_mode = EditMode.RESIZE
         self.enable_menu_buttons()
         self.resizeAction.setEnabled(False)
         self.undoAction.setEnabled(False)
 
     def set_mode_delete(self):
-        print("EDIT MODE: DELETE")
         self.playground.canvas.edit_mode = EditMode.DELETE
         self.enable_menu_buttons()
         self.deleteAction.setEnabled(False)
         self.undoAction.setEnabled(False)
 
     def set_mode_draw(self):
-        print("EDIT MODE: DRAW")
         self.playground.canvas.edit_mode = EditMode.DRAW
         self.enable_menu_buttons()
         self.drawAction.setEnabled(False)
-
-    def paste(self):
-        print("ACTION: PASTE")
-        self.playground.canvas.paste()
-
-    def undo(self):
-        print("ACTION: UNDO")
-        self.playground.canvas.undo()
-
-    def exit_action(self):
-        self.close()
 
     def enable_menu_buttons(self):
         self.moveAction.setEnabled(True)

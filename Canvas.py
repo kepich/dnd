@@ -1,32 +1,34 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor, QPainter, QWheelEvent
-from PyQt6.QtWidgets import QLabel, QApplication
+from PyQt6.QtWidgets import QLabel, QApplication, QSizePolicy
+from PyQt6.uic.properties import QtGui
 
 from Camera import Camera
 from EditModeEnum import EditMode
 from UpdateLastDecorator import *
 
 LINE_WIDTH = 4
+GRID_LINE_WIDTH = 1
+GRID_STEP = 50
 
 
 class Canvas(QLabel):
-    MAX_WIDTH = 1000
-    MAX_HEIGHT = 1000
-
     def __init__(self, parent=None):
         super().__init__()
 
         self.setParent(parent)
+
+        # self.setMaximumSize(2400, 1800)
+        # self.setFixedWidth(1200)
+        self.sizePolicy().setHorizontalPolicy(QSizePolicy.Policy.Maximum)
+
 
         self.last_x, self.last_y = None, None
         self.pen_color = QColor('#000000')
         self.objects = []
         self.last_draw = None
 
-        self.MAX_WIDTH = self.geometry().width()
-        self.MAX_HEIGHT = self.geometry().height()
-
-        self.camera = Camera(self.MAX_WIDTH, self.MAX_HEIGHT)
+        self.camera = Camera(self.width(), self.height())
 
         self.edit_mode = EditMode.DRAW
 
@@ -117,7 +119,7 @@ class Canvas(QLabel):
         event.accept()
 
     def undo(self):
-        if len(self.objects) > 1:
+        if len(self.objects) > 0:
             self.objects = self.objects[:-1]
 
         self.redraw()
@@ -136,8 +138,8 @@ class Canvas(QLabel):
                                         QPixmap(1, 1))
 
             new_object.from_pixmap_and_offset(pixmap,
-                                              self.camera.x_rel(x_pos),
-                                              self.camera.y_rel(y_pos))
+                                              self.camera.x_abs(x_pos),
+                                              self.camera.y_abs(y_pos))
 
             self.objects.append(new_object)
             self.redraw()
@@ -147,7 +149,26 @@ class Canvas(QLabel):
         self.redraw()
 
     def drawGrid(self, pixmap):
-        pass
+        painter = QPainter(pixmap)
+        p = painter.pen()
+        p.setWidth(GRID_LINE_WIDTH)
+        p.setColor(QColor('#999999'))
+        painter.begin(pixmap)
+        painter.setPen(p)
+
+        rel_grid_step = self.camera.rel(GRID_STEP)
+        temp_x = self.camera.x_offset_rel() % rel_grid_step
+        temp_y = self.camera.y_offset_rel() % rel_grid_step
+
+        while temp_x <= pixmap.width():
+            painter.drawLine(temp_x, 0, temp_x, pixmap.height())
+            temp_x = temp_x + rel_grid_step
+
+        while temp_y <= pixmap.height():
+            painter.drawLine(0, temp_y, pixmap.width(), temp_y)
+            temp_y = temp_y + rel_grid_step
+
+        painter.end()
 
     def redraw(self):
         self.clearAll()
@@ -160,9 +181,15 @@ class Canvas(QLabel):
             painter.drawPixmap(self.camera.project(pm), pm.pixmap)
         painter.end()
 
+        self.drawGrid(pixmap)
         self.setPixmap(pixmap)
 
     def clearAll(self):
-        pixmap = QPixmap(self.MAX_WIDTH, self.MAX_HEIGHT)
+        pixmap = QPixmap(self.camera.MAX_WIDTH, self.camera.MAX_HEIGHT)
         pixmap.fill(Qt.GlobalColor.lightGray)
         self.setPixmap(pixmap)
+
+    def resizeEvent(self, a0) -> None:
+        self.camera.MAX_HEIGHT = self.parent().height() - 100
+        self.camera.MAX_WIDTH = self.parent().width() - self.parent().rightPanel.width() - 50
+        self.redraw()

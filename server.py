@@ -1,6 +1,7 @@
+import socket
+
 import Configuration
 from Configuration import Configuration
-import socket
 
 
 def receive_data(connections):

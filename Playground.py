@@ -1,29 +1,32 @@
-from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 
 from Canvas import Canvas
 from ColorPalette import *
+from RightPanel import RightPanel
 
 
 class Playground(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.setFixedSize(QSize(1000, 800))
-        self.setStyleSheet("border: 1px solid black;")
-
         self.canvas = Canvas(self)
+        self.rightPanel = RightPanel(self)
 
         self.createPaletteWidget()
 
     def createPaletteWidget(self):
-        vertical_layout = QVBoxLayout()
-        self.setLayout(vertical_layout)
-        vertical_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        vertical_layout.addWidget(self.canvas)
-        palette = QHBoxLayout()
-        self.addPaletteButtons(palette)
-        vertical_layout.addLayout(palette)
+        self.vertical_layout = QVBoxLayout()
+        self.vertical_layout.addWidget(self.canvas)
+        self.palette = QHBoxLayout()
+        self.addPaletteButtons(self.palette)
+        self.vertical_layout.addStretch(1)
+        self.vertical_layout.addLayout(self.palette)
+
+        self.horizontal_layout = QHBoxLayout()
+        self.setLayout(self.horizontal_layout)
+        self.horizontal_layout.addLayout(self.vertical_layout)
+        self.horizontal_layout.addStretch(1)
+        self.horizontal_layout.addWidget(self.rightPanel)
 
     def addPaletteButtons(self, layout):
         for c in COLORS:

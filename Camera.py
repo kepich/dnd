@@ -10,6 +10,9 @@ class Camera:
     MAX_WIDTH = 1000
     MAX_HEIGHT = 1000
 
+    PLAYGROUND_WIDTH = 3000
+    PLAYGROUND_HEIGHT = 3000
+
     def __init__(self, max_width, max_height):
         self.MAX_WIDTH = max_width
         self.MAX_HEIGHT = max_height
@@ -35,17 +38,23 @@ class Camera:
         return v / self.MEASURE_MULTIPLIER
 
     def updateOffsets(self, dx, dy):
-        self.x_offset = max(-self.MAX_WIDTH, min(0, self.x_offset + self.abs(dx)))
-        self.y_offset = max(-self.MAX_HEIGHT, min(0, self.y_offset + self.abs(dy)))
+        self.x_offset = max(-self.PLAYGROUND_WIDTH + self.MAX_WIDTH, min(0, self.x_offset + self.abs(dx)))
+        self.y_offset = max(-self.PLAYGROUND_HEIGHT + self.MAX_HEIGHT, min(0, self.y_offset + self.abs(dy)))
 
     def updateMeasure(self, dm):
         self.MEASURE_MULTIPLIER = min(2.0, max(0.45, self.MEASURE_MULTIPLIER + dm))
 
-    def x_rel(self, x):
-        return -self.x_offset + self.abs(x)
+    def x_abs(self, x):
+        return self.abs(x) - self.x_offset
 
-    def y_rel(self, y):
-        return -self.y_offset + self.abs(y)
+    def y_abs(self, y):
+        return self.abs(y) - self.y_offset
+
+    def x_offset_rel(self):
+        return self.rel(self.x_offset)
+
+    def y_offset_rel(self):
+        return self.rel(self.y_offset)
 
     def abs_max_width(self):
         return self.abs(self.MAX_WIDTH)
@@ -54,4 +63,4 @@ class Camera:
         return self.abs(self.MAX_HEIGHT)
 
     def getCollide(self, x, y, objects):
-        return next(filter(lambda obj: obj.is_collide(self.x_rel(x), self.y_rel(y)), objects), None)
+        return next(filter(lambda obj: obj.is_collide(self.x_abs(x), self.y_abs(y)), objects), None)
