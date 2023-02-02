@@ -9,6 +9,7 @@ from EnterDialog import EnterDialog
 from LocalProxy import LocalProxy
 from NetworkProxy import NetworkProxy
 from Playground import Playground
+from SocketClient import SocketClient
 
 
 class ClientWindow(QMainWindow):
@@ -112,9 +113,9 @@ class ClientWindow(QMainWindow):
     def connect(self):
         dlg = EnterDialog(self)
         if dlg.exec():
-            print("Connecting")
+            print(f"Connecting to {dlg.addressTextBox.text()}:{dlg.portTextBox.text()}")
             canvas = self.playground.canvas
-            canvas.networkProxy = NetworkProxy()
+            canvas.networkProxy = NetworkProxy(SocketClient())
             canvas.networkProxy.socketClient.receivedSignal.connect(canvas.updateFromNetwork)
 
             self.connectAction.setEnabled(False)

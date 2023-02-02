@@ -3,10 +3,9 @@ from SocketClient import SocketClient
 
 
 class NetworkProxy:
-    def __init__(self, socketClient: SocketClient = None):
+    def __init__(self, socketClient: SocketClient):
         self.socketClient = socketClient
-        self.sendQueue = []
-        self.socketClient = SocketClient(self.sendQueue)
+        self.sendQueue = self.socketClient.getMessageQueue()
         self.socketClient.start()
 
     def move(self, obj, x, y):
