@@ -1,6 +1,6 @@
 import traceback
-from socket import socket, AF_INET, SOCK_STREAM
 
+import socketio
 from PyQt6.QtCore import QThread, pyqtSignal
 
 from Message import Message
@@ -8,55 +8,51 @@ from Message import Message
 
 class SocketClient(QThread):
     receivedSignal = pyqtSignal(Message)
+    connectionEstablishedSignal = pyqtSignal()
+    connectionRejectedSignal = pyqtSignal()
+
+    sio = socketio.Client()
 
     def __init__(self, ip, port):
         super().__init__()
-        self.messageQueue = []
-        self.clientSocket = socket(AF_INET, SOCK_STREAM)
+        self.queue = []
         self.ip = ip
         self.port = port
-
-    def getMessageQueue(self):
-        return self.messageQueue
+        self.sio.on("connect", self.connect)
+        self.sio.on("update", self.receive)
+        self.isActive = True
 
     def run(self):
-        # TODO show connecting screen
-        self.clientSocket.connect((self.ip, self.port))
-        self.clientSocket.setblocking(False)
-
-        while True:
-            # Try to send to server
-            if len(self.messageQueue) > 0:
-                msg = self.messageQueue[0]
-                self.messageQueue.remove(msg)
-                print(f"SEND: {msg}")
-                self.sendToSocket(msg)
-                print(f"SENDED: {msg}")
-
-            received = self.receiveFromSocket()
-            if received is not None:
-                self.updateObjects(received)
-
-    def sendToSocket(self, msg: Message):
         try:
-            self.clientSocket.send(msg.encode())
-            print(f"SENDED: {msg}")
+            self.sio.connect(f'http://{self.ip}:{self.port}')
+
+            while self.isActive:
+                # Try to send to server
+                if len(self.queue) > 0:
+                    msg = self.queue[0]
+                    self.queue.remove(msg)
+                    print(f"SEND: {msg}")
+                    self.sio.emit('broadcast_msg', msg.toBytes())
         except:
             traceback.print_exc()
+            self.connectionRejectedSignal.emit()
 
-    def receiveFromSocket(self):
-        try:
-            msg = self.clientSocket.recv(1024).decode()
-            print(f"RCIEVED: {msg}")
-            return msg
-        except:
-            traceback.print_exc()
+    def receive(self, msg):
+        self.updateObjects(msg)
+
+    def connect(self):
+        print('Connection established!')
+        self.connectionEstablishedSignal.emit()
 
     def updateObjects(self, msg):
         try:
-            self.receivedSignal.emit(msg)
+            self.receivedSignal.emit(Message.fromBytes(msg))
         except:
             traceback.print_exc()
 
     def closeConnection(self):
-        self.clientSocket.close()
+        self.sio.disconnect()
+        self.isActive = False
+
+    def getMessageQueue(self):
+        return self.queue

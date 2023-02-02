@@ -1,3 +1,4 @@
+import pickle
 from enum import Enum
 
 
@@ -10,10 +11,10 @@ class Action(Enum):
 
 
 class Message:
-    def __init__(self, action, uuid=None, drawableObject=None, dx=None, dy=None):
+    def __init__(self, action=None, uuid=None, drawableObject=None, dx=None, dy=None):
         self.action = action
         self.uuid = uuid
-        self.drawableObject = drawableObject
+        self.drawableObject = None if drawableObject is None else drawableObject.serialize()
         self.dx = dx
         self.dy = dy
 
@@ -23,3 +24,9 @@ class Message:
                      f"drawableObject={self.drawableObject}, " \
                      f"dx={self.dx}, " \
                      f"dy={self.dx}" + "}"
+
+    def toBytes(self):
+        return pickle.dumps(self)
+
+    def fromBytes(bytes):
+        return pickle.loads(bytes)

@@ -2,7 +2,7 @@ import sys
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QKeyEvent, QCursor
-from PyQt6.QtWidgets import QMainWindow, QWidgetAction, QToolBar
+from PyQt6.QtWidgets import QMainWindow, QWidgetAction, QToolBar, QMessageBox
 
 from EditModeEnum import EditMode
 from EnterDialog import EnterDialog
@@ -115,18 +115,31 @@ class ClientWindow(QMainWindow):
         if dlg.exec():
             print(f"Connecting to {dlg.addressTextBox.text()}:{dlg.portTextBox.text()}")
             canvas = self.playground.canvas
-            canvas.networkProxy = NetworkProxy(SocketClient())
+            canvas.networkProxy = NetworkProxy(SocketClient(dlg.addressTextBox.text(),
+                                                            dlg.portTextBox.text()))
             canvas.networkProxy.socketClient.receivedSignal.connect(canvas.updateFromNetwork)
+            canvas.networkProxy.socketClient.connectionEstablishedSignal.connect(self.connectionSlot)
+            canvas.networkProxy.socketClient.connectionRejectedSignal.connect(self.disconnectSlot)
+            canvas.networkProxy.msgBox.show()
 
             self.connectAction.setEnabled(False)
             self.disconnectAction.setEnabled(True)
 
     def disconnectSlot(self):
         canvas = self.playground.canvas
-        canvas.networkProxy.socketClient.disconnect()
+        canvas.networkProxy.msgBox.close()
+        canvas.networkProxy.disconnect()
         canvas.networkProxy = LocalProxy()
         self.connectAction.setEnabled(True)
         self.disconnectAction.setEnabled(False)
+
+        self.msgBox = QMessageBox()
+        self.msgBox.setText("Disconnected")
+        self.msgBox.show()
+
+    def connectionSlot(self):
+        canvas = self.playground.canvas
+        canvas.networkProxy.msgBox.close()
 
     def keyPressEvent(self, ev: QKeyEvent) -> None:
         if ev.modifiers() & Qt.KeyboardModifier.ControlModifier:

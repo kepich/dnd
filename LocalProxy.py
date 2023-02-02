@@ -13,3 +13,6 @@ class LocalProxy:
 
     def clear(self, collection):
         collection.clear()
+
+    def disconnect(self):
+        pass

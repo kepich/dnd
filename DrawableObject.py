@@ -1,5 +1,31 @@
-from PyQt6.QtCore import Qt, QRect
+import pickle
 import uuid
+
+from PyQt6.QtCore import Qt, QRect, QByteArray, QDataStream, QIODevice
+from PyQt6.QtGui import QPixmap
+
+
+class PixmapDto:
+    def __init__(self, pixmap):
+        self.pixmap = pixmap
+
+    def __getstate__(self):
+        qbyte_array = QByteArray()
+        stream = QDataStream(qbyte_array, QIODevice.OpenModeFlag.WriteOnly)
+        stream << self.pixmap
+        return qbyte_array
+
+    def __setstate__(self, buffer):
+        self.pixmap = QPixmap()
+        stream = QDataStream(buffer, QIODevice.ReadOnly)
+        stream >> self.pixmap
+
+
+class DrawableObjectDto:
+    def __init__(self, q_rect, uuid, pixmap):
+        self.q_rect = q_rect
+        self.uuid = uuid
+        self.pixmap = PixmapDto(pixmap)
 
 
 class DrawableObject:
@@ -42,3 +68,9 @@ class DrawableObject:
     def is_collide(self, x, y):
         return self.q_rect.x() < x < self.q_rect.x() + self.q_rect.width() and \
             self.q_rect.y() < y < self.q_rect.y() + self.q_rect.height()
+
+    def serialize(self):
+        return pickle.dumps(DrawableObjectDto(self.q_rect, self.uuid, self.pixmap))
+
+    def deserialize(drawableObjectDtoBytes):
+        return pickle.loads(drawableObjectDtoBytes)
