@@ -1,6 +1,8 @@
 import eventlet
 import socketio
 
+from server.Configuration import Configuration
+
 sio = socketio.Server()
 app = socketio.WSGIApp(sio)
 
@@ -26,4 +28,5 @@ def disconnect(sid):
 
 
 if __name__ == '__main__':
-    eventlet.wsgi.server(eventlet.listen(('', 50022)), app)
+    config = Configuration("server.conf")
+    eventlet.wsgi.server(eventlet.listen(('', config.get_port())), app)
