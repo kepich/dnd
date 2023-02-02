@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QMessageBox
 
-from Message import Message, Action
+from Action import Action
+from Message import Message
 from SocketClient import SocketClient
 
 

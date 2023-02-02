@@ -31,7 +31,6 @@ class SocketClient(QThread):
                 if len(self.queue) > 0:
                     msg = self.queue[0]
                     self.queue.remove(msg)
-                    print(f"SEND: {msg}")
                     self.sio.emit('broadcast_msg', msg.toBytes())
         except:
             traceback.print_exc()

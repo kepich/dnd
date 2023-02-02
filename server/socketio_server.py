@@ -9,20 +9,19 @@ players = []
 @sio.event
 def connect(sid, environ):
     players.append(sid)
+    # TODO: Оповестить всех о подключении игрока
     print('connect ', sid)
 
 
 @sio.on('broadcast_msg')
 def my_message(sid, data):
-    print(f"RECEIVED[{sid}]: {data}")
-    # sio.emit('update', data, skip_sid=sid)
-    sio.emit('update', data)
-    print(f"SENDED[{sid}]: {data}")
+    sio.emit('update', data, skip_sid=sid)
 
 
 @sio.event
 def disconnect(sid):
     players.remove(sid)
+    # TODO: Оповестить всех об отключении игрока
     print('disconnect ', sid)
 
 

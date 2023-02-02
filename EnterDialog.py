@@ -44,7 +44,7 @@ class EnterDialog(QDialog):
         ipRegex = QRegularExpression("^" + ipRange + "\\." + ipRange + "\\." + ipRange + "\\." + ipRange + "$")
         self.ipValidator = QRegularExpressionValidator(ipRegex, self)
         lineEdit.setValidator(self.ipValidator)
-        lineEdit.setText("0.0.0.0")
+        lineEdit.setText("127.0.0.1")
 
         return lineEdit
 

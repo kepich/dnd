@@ -17,7 +17,7 @@ class PixmapDto:
 
     def __setstate__(self, buffer):
         self.pixmap = QPixmap()
-        stream = QDataStream(buffer, QIODevice.ReadOnly)
+        stream = QDataStream(buffer, QIODevice.OpenModeFlag.ReadOnly)
         stream >> self.pixmap
 
 
@@ -25,7 +25,10 @@ class DrawableObjectDto:
     def __init__(self, q_rect, uuid, pixmap):
         self.q_rect = q_rect
         self.uuid = uuid
-        self.pixmap = PixmapDto(pixmap)
+        self.pixmapDto: PixmapDto = PixmapDto(pixmap)
+
+    def deserialize(drawableObjectDtoBytes):
+        return pickle.loads(drawableObjectDtoBytes)
 
 
 class DrawableObject:
@@ -67,10 +70,16 @@ class DrawableObject:
 
     def is_collide(self, x, y):
         return self.q_rect.x() < x < self.q_rect.x() + self.q_rect.width() and \
-            self.q_rect.y() < y < self.q_rect.y() + self.q_rect.height()
+               self.q_rect.y() < y < self.q_rect.y() + self.q_rect.height()
 
     def serialize(self):
         return pickle.dumps(DrawableObjectDto(self.q_rect, self.uuid, self.pixmap))
 
-    def deserialize(drawableObjectDtoBytes):
-        return pickle.loads(drawableObjectDtoBytes)
+    def deserializeFromDtoBytes(dtoBytes):
+        dto = DrawableObjectDto.deserialize(dtoBytes)
+        res = DrawableObject(0, 0, 0, 0, QPixmap(1, 1))
+        res.q_rect = dto.q_rect
+        res.pixmap = dto.pixmapDto.pixmap
+        res.uuid = dto.uuid
+
+        return res

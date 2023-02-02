@@ -2,9 +2,11 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor, QPainter, QWheelEvent
 from PyQt6.QtWidgets import QLabel, QApplication, QSizePolicy
 
+from Action import Action
 from Camera import Camera
 from EditModeEnum import EditMode
 from LocalProxy import LocalProxy
+from Message import Message
 from UpdateLastDecorator import *
 
 LINE_WIDTH = 4
@@ -138,8 +140,8 @@ class Canvas(QLabel):
                                             QPixmap(1, 1))
 
             self.last_draw.from_pixmap_and_offset(pixmap,
-                                              self.camera.x_abs(x_pos),
-                                              self.camera.y_abs(y_pos))
+                                                  self.camera.x_abs(x_pos),
+                                                  self.camera.y_abs(y_pos))
 
             self.networkProxy.create(self.objects, self.last_draw)
             self.redraw()
@@ -199,7 +201,22 @@ class Canvas(QLabel):
         self.isGridVisible = status
         self.redraw()
 
-    def updateFromNetwork(self, msg):
-        print("RECIEVED: " + str(msg))
+    def findObjectByUUID(self, uuid):
+        return next(filter(lambda obj: str(obj.uuid) == uuid, self.objects), None)
 
-        # TODO: Нужно разделить по действиям, и в зависимости от этого модифицировать объекты
+    def updateFromNetwork(self, msg: Message):
+        if msg.action is Action.CREATE:
+            self.objects.append(DrawableObject.deserializeFromDtoBytes(msg.drawableObject))
+        elif msg.action is Action.MOVE:
+            obj: DrawableObject = self.findObjectByUUID(msg.uuid)
+            obj.move(msg.dx, msg.dy)
+        elif msg.action is Action.RESIZE:
+            obj: DrawableObject = self.findObjectByUUID(msg.uuid)
+            obj.resize(msg.dx, msg.dy)
+        elif msg.action is Action.REMOVE:
+            obj: DrawableObject = self.findObjectByUUID(msg.uuid)
+            self.objects.remove(obj)
+        elif msg.action is Action.CLEAR:
+            self.objects.clear()
+
+        self.redraw()
