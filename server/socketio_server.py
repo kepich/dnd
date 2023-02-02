@@ -6,12 +6,14 @@ from server.Configuration import Configuration
 sio = socketio.Server()
 app = socketio.WSGIApp(sio)
 
-players = []
+players = {}
+
 
 @sio.event
 def connect(sid, environ):
-    players.append(sid)
-    # TODO: Оповестить всех о подключении игрока
+    players[sid] = next(filter(lambda tpl: tpl[0] == 'nickname', environ["headers_raw"]), (sid, sid))[1]
+    sio.emit('player_join', players[sid])
+    # sio.emit('player_join', players[sid], skip_sid=sid)
     print('connect ', sid)
 
 
@@ -22,8 +24,8 @@ def my_message(sid, data):
 
 @sio.event
 def disconnect(sid):
-    players.remove(sid)
-    # TODO: Оповестить всех об отключении игрока
+    sio.emit('player_leave', players[sid], skip_sid=sid)
+    del players[sid]
     print('disconnect ', sid)
 
 

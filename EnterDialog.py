@@ -1,3 +1,5 @@
+import random
+
 from PyQt6.QtCore import QRegularExpression
 from PyQt6.QtGui import QRegularExpressionValidator, QIntValidator
 from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QGridLayout, QPushButton
@@ -13,16 +15,21 @@ class EnterDialog(QDialog):
 
         self.gridLayout = QGridLayout()
 
+        self.nicknameLabel = QLabel("Nickname: ")
+        self.nicknameTextBox = self.createNicknameLineEdit()
+
         self.addressLabel = QLabel("Address: ")
         self.addressTextBox = self.createAddressLineEdit()
 
         self.portLabel = QLabel("Port: ")
         self.portTextBox = self.createPortLineEdit()
 
-        self.gridLayout.addWidget(self.addressLabel, 0, 0)
-        self.gridLayout.addWidget(self.addressTextBox, 0, 1)
-        self.gridLayout.addWidget(self.portLabel, 1, 0)
-        self.gridLayout.addWidget(self.portTextBox, 1, 1)
+        self.gridLayout.addWidget(self.nicknameLabel, 0, 0)
+        self.gridLayout.addWidget(self.nicknameTextBox, 0, 1)
+        self.gridLayout.addWidget(self.addressLabel, 1, 0)
+        self.gridLayout.addWidget(self.addressTextBox, 1, 1)
+        self.gridLayout.addWidget(self.portLabel, 2, 0)
+        self.gridLayout.addWidget(self.portTextBox, 2, 1)
 
         self.vLayout.addLayout(self.gridLayout)
 
@@ -37,6 +44,13 @@ class EnterDialog(QDialog):
         self.vLayout.addLayout(self.hLayout)
 
         self.setLayout(self.vLayout)
+
+    def createNicknameLineEdit(self):
+        lineEdit = QLineEdit()
+        rndNames = ["Биба", "Боба", "Бабаджи", "Фортинайте", "Баластейшон", "Файв", "Фираз", "Кхырыдыт", "Геликоптер"]
+        lineEdit.setText(random.choice(rndNames))
+
+        return lineEdit
 
     def createAddressLineEdit(self):
         lineEdit = QLineEdit()

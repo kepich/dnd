@@ -1,8 +1,7 @@
-import sys
-
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QKeyEvent, QCursor
 from PyQt6.QtWidgets import QMainWindow, QWidgetAction, QToolBar, QMessageBox
+from transliterate import translit
 
 from EditModeEnum import EditMode
 from EnterDialog import EnterDialog
@@ -115,21 +114,39 @@ class ClientWindow(QMainWindow):
         if dlg.exec():
             print(f"Connecting to {dlg.addressTextBox.text()}:{dlg.portTextBox.text()}")
             canvas = self.playground.canvas
-            canvas.networkProxy = NetworkProxy(SocketClient(dlg.addressTextBox.text(),
-                                                            dlg.portTextBox.text()))
-            canvas.networkProxy.socketClient.receivedSignal.connect(canvas.updateFromNetwork)
-            canvas.networkProxy.socketClient.connectionEstablishedSignal.connect(self.connectionSlot)
-            canvas.networkProxy.socketClient.connectionRejectedSignal.connect(self.disconnectSlot)
+            canvas.networkProxy = NetworkProxy(
+                SocketClient(dlg.addressTextBox.text(),
+                             dlg.portTextBox.text(),
+                             headers={
+                                 "nickname": translit(dlg.nicknameTextBox.text(), language_code="ru", reversed=True)
+                             }))
+            self.connectSocketSignals(canvas)
             canvas.networkProxy.msgBox.show()
 
             self.connectAction.setEnabled(False)
             self.disconnectAction.setEnabled(True)
+
+    def connectSocketSignals(self, canvas):
+        canvas.networkProxy.socketClient.receivedSignal.connect(canvas.updateFromNetwork)
+        canvas.networkProxy.socketClient.connectionEstablishedSignal.connect(self.connectionSlot)
+        canvas.networkProxy.socketClient.connectionRejectedSignal.connect(self.disconnectSlot)
+        canvas.networkProxy.socketClient.playerJoinSignal.connect(self.playerJoinSlot)
+        canvas.networkProxy.socketClient.playerLeaveSignal.connect(self.playerLeaveSlot)
+
+    def playerJoinSlot(self, nickname):
+        print(translit(nickname, 'ru') + " join the game.")
+        self.playground.rightPanel.addChatMessage("SERVER", translit(nickname, 'ru') + " join the game.")
+
+    def playerLeaveSlot(self, nickname):
+        print(translit(nickname, 'ru') + " leave the game.")
+        self.playground.rightPanel.addChatMessage("SERVER", translit(nickname, 'ru') + " leave the game.")
 
     def disconnectSlot(self):
         canvas = self.playground.canvas
         canvas.networkProxy.msgBox.close()
         canvas.networkProxy.disconnect()
         canvas.networkProxy = LocalProxy()
+        self.playground.rightPanel.clearChat()
         self.connectAction.setEnabled(True)
         self.disconnectAction.setEnabled(False)
 

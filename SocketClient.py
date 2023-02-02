@@ -10,21 +10,26 @@ class SocketClient(QThread):
     receivedSignal = pyqtSignal(Message)
     connectionEstablishedSignal = pyqtSignal()
     connectionRejectedSignal = pyqtSignal()
+    playerJoinSignal = pyqtSignal(str)
+    playerLeaveSignal = pyqtSignal(str)
 
     sio = socketio.Client()
 
-    def __init__(self, ip, port):
+    def __init__(self, ip, port, headers):
         super().__init__()
         self.queue = []
         self.ip = ip
         self.port = port
-        self.sio.on("connect", self.connect)
+        self.headers = headers
+        self.sio.on("connect", self.connectionEstablishedSignal.emit)
         self.sio.on("update", self.receive)
+        self.sio.on("player_join", self.playerJoinSignal.emit)
+        self.sio.on("player_leave", self.playerLeaveSignal.emit)
         self.isActive = True
 
     def run(self):
         try:
-            self.sio.connect(f'http://{self.ip}:{self.port}')
+            self.sio.connect(f'http://{self.ip}:{self.port}', headers=self.headers)
 
             while self.isActive:
                 # Try to send to server
@@ -37,13 +42,6 @@ class SocketClient(QThread):
             self.connectionRejectedSignal.emit()
 
     def receive(self, msg):
-        self.updateObjects(msg)
-
-    def connect(self):
-        print('Connection established!')
-        self.connectionEstablishedSignal.emit()
-
-    def updateObjects(self, msg):
         try:
             self.receivedSignal.emit(Message.fromBytes(msg))
         except:
