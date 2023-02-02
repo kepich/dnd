@@ -201,3 +201,5 @@ class Canvas(QLabel):
 
     def updateFromNetwork(self, msg):
         print("RECIEVED: " + str(msg))
+
+        # TODO: Нужно разделить по действиям, и в зависимости от этого модифицировать объекты
