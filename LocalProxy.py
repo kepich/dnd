@@ -22,3 +22,6 @@ class LocalProxy:
 
     def sendMessageToChat(self, msg):
         pass
+
+    def firstLoad(self, objects):
+        pass

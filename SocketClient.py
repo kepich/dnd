@@ -3,16 +3,19 @@ import traceback
 import socketio
 from PyQt6.QtCore import QThread, pyqtSignal
 
+from FirstLoadDto import FirstLoadDto
 from Message import Message
 
 
 class SocketClient(QThread):
-    receivedSignal = pyqtSignal(Message)
+    receivedSignal              = pyqtSignal(Message)
     connectionEstablishedSignal = pyqtSignal()
-    connectionRejectedSignal = pyqtSignal()
-    playerJoinSignal = pyqtSignal(str)
-    playerLeaveSignal = pyqtSignal(str)
-    chatSignal = pyqtSignal(list)
+    connectionRejectedSignal    = pyqtSignal()
+    playerJoinSignal            = pyqtSignal(str)
+    playerLeaveSignal           = pyqtSignal(str)
+    chatSignal                  = pyqtSignal(list)
+    needFirstLoadSignal         = pyqtSignal()
+    firstLoadSignal             = pyqtSignal(FirstLoadDto)
 
     sio = socketio.Client()
 
@@ -29,6 +32,8 @@ class SocketClient(QThread):
         self.sio.on("player_join", self.playerJoinSignal.emit)
         self.sio.on("player_leave", self.playerLeaveSignal.emit)
         self.sio.on("chat_msg", self.chatSignal.emit)
+        self.sio.on("need_first_load", self.needFirstLoadSignal.emit)
+        self.sio.on("first_load", lambda msg: self.firstLoadSignal.emit(FirstLoadDto.fromBytes(msg)))
 
         self.isActive = True
 
@@ -51,3 +56,6 @@ class SocketClient(QThread):
 
     def sendChatMessage(self, msg: str):
         return self.sio.emit("chat_msg", msg)
+
+    def sendFirstLoad(self, msg: FirstLoadDto):
+        return self.sio.emit("first_load", msg.toBytes())

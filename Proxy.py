@@ -35,3 +35,6 @@ class Proxy:
 
     def connect(self, socketClient: SocketClient):
         self.tempProxy = NetworkProxy(socketClient)
+
+    def firstLoad(self, objects):
+        self.tempProxy.firstLoad(objects)

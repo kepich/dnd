@@ -129,6 +129,9 @@ class ClientWindow(QMainWindow):
         socketClient.playerLeaveSignal.connect(self.playerLeaveSlot)
         socketClient.chatSignal.connect(self.addChatMessageSlot)
 
+        socketClient.needFirstLoadSignal.connect(self.playground.canvas.firstLoad)
+        socketClient.firstLoadSignal.connect(self.playground.canvas.loadGame)
+
     def addChatMessageSlot(self, message):
         self.playground.rightPanel.chatWidget.addChatMessage(message[0], message[1])
 

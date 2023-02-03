@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import QLabel, QApplication, QSizePolicy
 from Action import Action
 from Camera import Camera
 from EditModeEnum import EditMode
+from FirstLoadDto import FirstLoadDto
 from Message import Message
 from Proxy import Proxy
 from UpdateLastDecorator import *
@@ -80,7 +81,7 @@ class Canvas(QLabel):
         self.setPixmap(pixmap)
 
     @update_last(get_collide)
-    def moveAction(self, e):
+    def moveAction(self, e):        # TODO: Добавить куммулятивную часть и ее отправлять
         if self.last_draw is not None:
             self.networkProxy.move(self.last_draw,
                                    self.camera.abs(e.position().x() - self.last_x),
@@ -88,7 +89,7 @@ class Canvas(QLabel):
             self.redraw()
 
     @update_last(get_collide)
-    def resizeAction(self, e):
+    def resizeAction(self, e):      # TODO: Добавить куммулятивную часть и ее отправлять
         if self.last_draw is not None:
             self.networkProxy.resize(self.last_draw,
                                      self.camera.abs(e.position().x() - self.last_x),
@@ -221,4 +222,13 @@ class Canvas(QLabel):
         elif msg.action is Action.CLEAR:
             self.objects.clear()
 
+        self.redraw()
+
+    def firstLoad(self):
+        self.networkProxy.firstLoad(self.objects)
+        # TODO: Может быть стоит отправлять тут и чат тоже
+
+    def loadGame(self, data: FirstLoadDto):
+        for obj in data.objects:
+            self.objects.append(obj)
         self.redraw()
