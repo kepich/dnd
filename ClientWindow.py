@@ -5,8 +5,6 @@ from transliterate import translit
 
 from EditModeEnum import EditMode
 from EnterDialog import EnterDialog
-from LocalProxy import LocalProxy
-from NetworkProxy import NetworkProxy
 from Playground import Playground
 from SocketClient import SocketClient
 
@@ -20,11 +18,11 @@ class ClientWindow(QMainWindow):
         self.playground = Playground(self)
         self.setCentralWidget(self.playground)
 
-        self.create_toolbar()
+        self.createToolBar()
         self.showFullScreen()
 
-    def create_toolbar(self):
-        self.create_toolbar_actions()
+    def createToolBar(self):
+        self.createToolBarActions()
 
         tool_bar = QToolBar("Tools")
         tool_bar.addAction(self.moveAction)
@@ -39,69 +37,69 @@ class ClientWindow(QMainWindow):
 
         self.addToolBar(Qt.ToolBarArea.LeftToolBarArea, tool_bar)
 
-    def create_toolbar_actions(self):
+    def createToolBarActions(self):
         self.undoAction = QWidgetAction(self)
         self.undoAction.setText("Undo")
         self.undoAction.triggered.connect(self.playground.canvas.undo)
 
         self.moveAction = QWidgetAction(self)
         self.moveAction.setText("Move")
-        self.moveAction.triggered.connect(self.set_mode_move)
+        self.moveAction.triggered.connect(self.setMoveMode)
 
         self.resizeAction = QWidgetAction(self)
         self.resizeAction.setText("Resize")
-        self.resizeAction.triggered.connect(self.set_mode_resize)
+        self.resizeAction.triggered.connect(self.setResizeMode)
 
         self.deleteAction = QWidgetAction(self)
         self.deleteAction.setText("Delete")
-        self.deleteAction.triggered.connect(self.set_mode_delete)
+        self.deleteAction.triggered.connect(self.setDeleteMode)
 
         self.drawAction = QWidgetAction(self)
         self.drawAction.setText("Draw")
-        self.drawAction.triggered.connect(self.set_mode_draw)
+        self.drawAction.triggered.connect(self.setDrawMode)
         self.drawAction.setEnabled(False)
 
         self.clearCanvasAction = QWidgetAction(self)
-        self.clearCanvasAction.triggered.connect(self.playground.canvas.clearCanvasAction)
         self.clearCanvasAction.setText("Clear all")
+        self.clearCanvasAction.triggered.connect(self.playground.canvas.clearCanvasAction)
 
         self.connectAction = QWidgetAction(self)
-        self.connectAction.triggered.connect(self.connect)
         self.connectAction.setText("Connect")
+        self.connectAction.triggered.connect(self.connect)
 
         self.disconnectAction = QWidgetAction(self)
-        self.disconnectAction.triggered.connect(self.disconnectSlot)
         self.disconnectAction.setEnabled(False)
         self.disconnectAction.setText("Disconnect")
+        self.disconnectAction.triggered.connect(self.disconnectSlot)
 
         self.exitAction = QWidgetAction(self)
-        self.exitAction.triggered.connect(self.close)
         self.exitAction.setText("Exit")
+        self.exitAction.triggered.connect(self.close)
 
-    def set_mode_move(self):
+    def setMoveMode(self):
         self.playground.canvas.edit_mode = EditMode.MOVE
-        self.enable_menu_buttons()
+        self.enableMenuButtons()
         self.moveAction.setEnabled(False)
         self.undoAction.setEnabled(False)
 
-    def set_mode_resize(self):
+    def setResizeMode(self):
         self.playground.canvas.edit_mode = EditMode.RESIZE
-        self.enable_menu_buttons()
+        self.enableMenuButtons()
         self.resizeAction.setEnabled(False)
         self.undoAction.setEnabled(False)
 
-    def set_mode_delete(self):
+    def setDeleteMode(self):
         self.playground.canvas.edit_mode = EditMode.DELETE
-        self.enable_menu_buttons()
+        self.enableMenuButtons()
         self.deleteAction.setEnabled(False)
         self.undoAction.setEnabled(False)
 
-    def set_mode_draw(self):
+    def setDrawMode(self):
         self.playground.canvas.edit_mode = EditMode.DRAW
-        self.enable_menu_buttons()
+        self.enableMenuButtons()
         self.drawAction.setEnabled(False)
 
-    def enable_menu_buttons(self):
+    def enableMenuButtons(self):
         self.moveAction.setEnabled(True)
         self.resizeAction.setEnabled(True)
         self.deleteAction.setEnabled(True)
@@ -112,51 +110,43 @@ class ClientWindow(QMainWindow):
     def connect(self):
         dlg = EnterDialog(self)
         if dlg.exec():
-            print(f"Connecting to {dlg.addressTextBox.text()}:{dlg.portTextBox.text()}")
-            canvas = self.playground.canvas
-            canvas.networkProxy = NetworkProxy(
-                SocketClient(dlg.addressTextBox.text(),
-                             dlg.portTextBox.text(),
-                             headers={
-                                 "nickname": translit(dlg.nicknameTextBox.text(), language_code="ru", reversed=True)
-                             }))
-            self.connectSocketSignals(canvas)
-            canvas.networkProxy.msgBox.show()
+            socketClient = SocketClient(dlg.addressTextBox.text(),
+                                        dlg.portTextBox.text(),
+                                        translit(dlg.nicknameTextBox.text(), language_code="ru", reversed=True))
+            self.playground.canvas.networkProxy.connect(socketClient)
+            self.connectSocketSignals(socketClient)
 
             self.connectAction.setEnabled(False)
             self.disconnectAction.setEnabled(True)
 
-    def connectSocketSignals(self, canvas):
-        canvas.networkProxy.socketClient.receivedSignal.connect(canvas.updateFromNetwork)
-        canvas.networkProxy.socketClient.connectionEstablishedSignal.connect(self.connectionSlot)
-        canvas.networkProxy.socketClient.connectionRejectedSignal.connect(self.disconnectSlot)
-        canvas.networkProxy.socketClient.playerJoinSignal.connect(self.playerJoinSlot)
-        canvas.networkProxy.socketClient.playerLeaveSignal.connect(self.playerLeaveSlot)
+    def connectSocketSignals(self, socketClient):
+        socketClient.receivedSignal.connect(self.playground.canvas.updateFromNetwork)
+        socketClient.connectionEstablishedSignal.connect(self.playground.canvas.networkProxy.connected)
+
+        socketClient.connectionRejectedSignal.connect(self.disconnectSlot)
+
+        socketClient.playerJoinSignal.connect(self.playerJoinSlot)
+        socketClient.playerLeaveSignal.connect(self.playerLeaveSlot)
+        socketClient.chatSignal.connect(self.addChatMessageSlot)
+
+    def addChatMessageSlot(self, message):
+        self.playground.rightPanel.chatWidget.addChatMessage(message[0], message[1])
 
     def playerJoinSlot(self, nickname):
-        print(translit(nickname, 'ru') + " join the game.")
-        self.playground.rightPanel.addChatMessage("SERVER", translit(nickname, 'ru') + " join the game.")
+        self.playground.rightPanel.chatWidget.addChatMessage("SERVER", nickname + " join the game.")
 
     def playerLeaveSlot(self, nickname):
-        print(translit(nickname, 'ru') + " leave the game.")
-        self.playground.rightPanel.addChatMessage("SERVER", translit(nickname, 'ru') + " leave the game.")
+        self.playground.rightPanel.chatWidget.addChatMessage("SERVER", nickname + " leave the game.")
 
     def disconnectSlot(self):
-        canvas = self.playground.canvas
-        canvas.networkProxy.msgBox.close()
-        canvas.networkProxy.disconnect()
-        canvas.networkProxy = LocalProxy()
-        self.playground.rightPanel.clearChat()
+        self.playground.canvas.networkProxy.disconnect()
+        self.playground.rightPanel.chatWidget.clearChat()
         self.connectAction.setEnabled(True)
         self.disconnectAction.setEnabled(False)
 
-        self.msgBox = QMessageBox()
-        self.msgBox.setText("Disconnected")
-        self.msgBox.show()
-
-    def connectionSlot(self):
-        canvas = self.playground.canvas
-        canvas.networkProxy.msgBox.close()
+        disconnectMessageBox = QMessageBox()
+        disconnectMessageBox.setText("Disconnected")
+        disconnectMessageBox.show()
 
     def keyPressEvent(self, ev: QKeyEvent) -> None:
         if ev.modifiers() & Qt.KeyboardModifier.ControlModifier:

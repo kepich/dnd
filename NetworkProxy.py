@@ -8,10 +8,11 @@ from SocketClient import SocketClient
 class NetworkProxy:
     def __init__(self, socketClient: SocketClient):
         self.socketClient = socketClient
-        self.msgBox = QMessageBox()
-        self.msgBox.setText("Connecting...")
-        self.sendQueue = self.socketClient.getMessageQueue()
+        self.connectingMessageBox = QMessageBox()
+        self.connectingMessageBox.setText("Connecting...")
+        self.sendQueue = self.socketClient.queue
         self.socketClient.start()
+        self.connectingMessageBox.show()
 
     def move(self, obj, x, y):
         obj.move(x, y)
@@ -34,5 +35,12 @@ class NetworkProxy:
         self.sendQueue.append(Message(Action.CLEAR))
 
     def disconnect(self):
+        self.connectingMessageBox.close()
         self.socketClient.closeConnection()
         self.socketClient.disconnect()
+
+    def connected(self):
+        self.connectingMessageBox.close()
+
+    def sendMessageToChat(self, msg):
+        self.socketClient.sendChatMessage(msg)

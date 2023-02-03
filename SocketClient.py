@@ -12,19 +12,24 @@ class SocketClient(QThread):
     connectionRejectedSignal = pyqtSignal()
     playerJoinSignal = pyqtSignal(str)
     playerLeaveSignal = pyqtSignal(str)
+    chatSignal = pyqtSignal(list)
 
     sio = socketio.Client()
 
-    def __init__(self, ip, port, headers):
+    def __init__(self, ip, port, nickname):
         super().__init__()
         self.queue = []
         self.ip = ip
         self.port = port
-        self.headers = headers
+        self.nickname = nickname
+        self.headers = {"nickname": nickname}
+
         self.sio.on("connect", self.connectionEstablishedSignal.emit)
-        self.sio.on("update", self.receive)
+        self.sio.on("update", lambda msg: self.receivedSignal.emit(Message.fromBytes(msg)))
         self.sio.on("player_join", self.playerJoinSignal.emit)
         self.sio.on("player_leave", self.playerLeaveSignal.emit)
+        self.sio.on("chat_msg", self.chatSignal.emit)
+
         self.isActive = True
 
     def run(self):
@@ -32,7 +37,6 @@ class SocketClient(QThread):
             self.sio.connect(f'http://{self.ip}:{self.port}', headers=self.headers)
 
             while self.isActive:
-                # Try to send to server
                 if len(self.queue) > 0:
                     msg = self.queue[0]
                     self.queue.remove(msg)
@@ -41,15 +45,9 @@ class SocketClient(QThread):
             traceback.print_exc()
             self.connectionRejectedSignal.emit()
 
-    def receive(self, msg):
-        try:
-            self.receivedSignal.emit(Message.fromBytes(msg))
-        except:
-            traceback.print_exc()
-
     def closeConnection(self):
         self.sio.disconnect()
         self.isActive = False
 
-    def getMessageQueue(self):
-        return self.queue
+    def sendChatMessage(self, msg: str):
+        return self.sio.emit("chat_msg", msg)

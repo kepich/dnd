@@ -16,3 +16,9 @@ class LocalProxy:
 
     def disconnect(self):
         pass
+
+    def connected(self):
+        pass
+
+    def sendMessageToChat(self, msg):
+        pass

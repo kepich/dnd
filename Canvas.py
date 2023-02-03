@@ -5,8 +5,8 @@ from PyQt6.QtWidgets import QLabel, QApplication, QSizePolicy
 from Action import Action
 from Camera import Camera
 from EditModeEnum import EditMode
-from LocalProxy import LocalProxy
 from Message import Message
+from Proxy import Proxy
 from UpdateLastDecorator import *
 
 LINE_WIDTH = 4
@@ -16,11 +16,10 @@ GRID_STEP = 50
 
 class Canvas(QLabel):
     def __init__(self, parent=None):
-        super().__init__()
-
+        super().__init__(parent)
         self.setParent(parent)
-        self.isGridVisible = True
 
+        self.isGridVisible = True
         self.sizePolicy().setHorizontalPolicy(QSizePolicy.Policy.Maximum)
 
         self.last_x, self.last_y = None, None
@@ -29,11 +28,14 @@ class Canvas(QLabel):
         self.last_draw = None
 
         self.camera = Camera(self.width(), self.height())
-
-        self.networkProxy = LocalProxy()
+        self.networkProxy = Proxy()
 
         self.edit_mode = EditMode.DRAW
+        self.redraw()
 
+    def resizeCanvas(self, w, h):
+        self.camera.MAX_WIDTH = w
+        self.camera.MAX_HEIGHT = h
         self.redraw()
 
     def setPenColor(self, c):

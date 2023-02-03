@@ -1,4 +1,5 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QWidget, QHBoxLayout, QGridLayout
 
 from Canvas import Canvas
 from ColorPalette import *
@@ -8,25 +9,26 @@ from RightPanel import RightPanel
 class Playground(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
+        print(f"{self.width()}, {self.height()}")
 
         self.canvas = Canvas(self)
+        self.createPaletteWidget()
         self.rightPanel = RightPanel(self)
 
-        self.createPaletteWidget()
+        self.gridLayout = QGridLayout()
+        self.gridLayout.addWidget(self.canvas, 0, 0, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+        self.gridLayout.addWidget(self.rightPanel, 0, 1, Qt.AlignmentFlag.AlignRight)
+
+        self.gridLayout.setRowStretch(1, 1)
+        self.gridLayout.addLayout(self.palette, 2, 0)
+
+        self.gridLayout.setRowStretch(3, 1)
+
+        self.setLayout(self.gridLayout)
 
     def createPaletteWidget(self):
-        self.vertical_layout = QVBoxLayout()
-        self.vertical_layout.addWidget(self.canvas)
         self.palette = QHBoxLayout()
         self.addPaletteButtons(self.palette)
-        self.vertical_layout.addStretch(1)
-        self.vertical_layout.addLayout(self.palette)
-
-        self.horizontal_layout = QHBoxLayout()
-        self.setLayout(self.horizontal_layout)
-        self.horizontal_layout.addLayout(self.vertical_layout)
-        self.horizontal_layout.addStretch(1)
-        self.horizontal_layout.addWidget(self.rightPanel)
 
     def addPaletteButtons(self, layout):
         for c in COLORS:

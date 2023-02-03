@@ -13,13 +13,17 @@ players = {}
 def connect(sid, environ):
     players[sid] = next(filter(lambda tpl: tpl[0] == 'nickname', environ["headers_raw"]), (sid, sid))[1]
     sio.emit('player_join', players[sid])
-    # sio.emit('player_join', players[sid], skip_sid=sid)
     print('connect ', sid)
 
 
 @sio.on('broadcast_msg')
 def my_message(sid, data):
     sio.emit('update', data, skip_sid=sid)
+
+
+@sio.on('chat_msg')
+def chat(sid, data):
+    sio.emit('chat_msg', [players[sid], data])
 
 
 @sio.event
