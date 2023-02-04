@@ -93,9 +93,6 @@ class Canvas(QLabel):
         if self.last_draw is not None:
             self.last_draw.resize(self.camera.abs(e.position().x() - self.last_x),
                                   self.camera.abs(e.position().y() - self.last_y))
-            # self.networkProxy.resize(self.last_draw,
-            #                          self.camera.abs(e.position().x() - self.last_x),
-            #                          self.camera.abs(e.position().y() - self.last_y))
             self.redraw()
 
     @update_last(get_none)
@@ -115,11 +112,12 @@ class Canvas(QLabel):
             if delete_candidate is not None:
                 self.networkProxy.remove(self.objects, delete_candidate)
                 self.redraw()
-        elif self.edit_mode is EditMode.MOVE:
+        elif self.edit_mode is EditMode.MOVE and self.last_draw is not None:
+            # TODO: Здесь можно сделать прилипание к сетке
             self.networkProxy.moveCumulative(self.last_draw,
                                              self.camera.abs(self.dx_cumulative),
                                              self.camera.abs(self.dy_cumulative))
-        elif self.edit_mode is EditMode.RESIZE:
+        elif self.edit_mode is EditMode.RESIZE and self.last_draw is not None:
             self.networkProxy.resizeCumulative(self.last_draw,
                                                self.camera.abs(self.dx_cumulative),
                                                self.camera.abs(self.dy_cumulative))
