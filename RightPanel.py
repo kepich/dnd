@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QCheckBox, QHBoxLayout, QListW
 
 from ChatWidget import ChatWidget
 from DiceWidget import DiceWidget
+from TimeWidget import TimeWidget
 
 
 class RightPanel(QWidget):
@@ -12,6 +13,7 @@ class RightPanel(QWidget):
         self.setFixedWidth(300)
 
         self.addElements()
+        self.vertical_layout.addLayout(self.addWeatherAndTime())
         self.vertical_layout.addStretch(1)
         self.diceWidget = DiceWidget(self)
         self.vertical_layout.addWidget(self.diceWidget)
@@ -36,3 +38,11 @@ class RightPanel(QWidget):
         self.darknessCheckBox = QCheckBox("Darkness")
         layout.addWidget(self.darknessCheckBox)
 
+    def addWeatherAndTime(self):
+        secondRow = QHBoxLayout()
+        self.timeWidget = TimeWidget()
+        self.timeWidget.startTime()
+        secondRow.addWidget(self.timeWidget)
+        # secondRow.addWidget(secondRow)
+
+        return secondRow
