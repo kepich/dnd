@@ -15,12 +15,10 @@ class NetworkProxy:
         self.socketClient.start()
         self.connectingMessageBox.show()
 
-    def move(self, obj, x, y):
-        obj.move(x, y)
+    def moveCumulative(self, obj, x, y):
         self.sendQueue.append(Message(Action.MOVE, uuid=str(obj.uuid), dx=x, dy=y))
 
-    def resize(self, obj, x, y):
-        obj.resize(x, y)
+    def resizeCumulative(self, obj, x, y):
         self.sendQueue.append(Message(Action.RESIZE, uuid=str(obj.uuid), dx=x, dy=y))
 
     def create(self, collection, obj):

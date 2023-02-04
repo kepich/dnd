@@ -8,11 +8,11 @@ class Proxy:
         self.localProxy = LocalProxy()
         self.tempProxy = self.localProxy
 
-    def move(self, obj, x, y):
-        self.tempProxy.move(obj, x, y)
+    def moveCumulative(self, obj, x, y):
+        self.tempProxy.moveCumulative(obj, x, y)
 
-    def resize(self, obj, x, y):
-        self.tempProxy.resize(obj, x, y)
+    def resizeCumulative(self, obj, x, y):
+        self.tempProxy.resizeCumulative(obj, x, y)
 
     def create(self, collection, obj):
         self.tempProxy.create(collection, obj)

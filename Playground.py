@@ -9,7 +9,6 @@ from RightPanel import RightPanel
 class Playground(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        print(f"{self.width()}, {self.height()}")
 
         self.canvas = Canvas(self)
         self.createPaletteWidget()

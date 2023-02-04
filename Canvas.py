@@ -24,6 +24,7 @@ class Canvas(QLabel):
         self.sizePolicy().setHorizontalPolicy(QSizePolicy.Policy.Maximum)
 
         self.last_x, self.last_y = None, None
+        self.dx_cumulative, self.dy_cumulative = None, None
         self.pen_color = QColor('#000000')
         self.objects = []
         self.last_draw = None
@@ -80,20 +81,21 @@ class Canvas(QLabel):
 
         self.setPixmap(pixmap)
 
-    @update_last(get_collide)
-    def moveAction(self, e):        # TODO: Добавить куммулятивную часть и ее отправлять
+    @update_last_cumulative(get_collide)
+    def moveAction(self, e):
         if self.last_draw is not None:
-            self.networkProxy.move(self.last_draw,
-                                   self.camera.abs(e.position().x() - self.last_x),
-                                   self.camera.abs(e.position().y() - self.last_y))
+            self.last_draw.move(self.camera.abs(e.position().x() - self.last_x),
+                                self.camera.abs(e.position().y() - self.last_y))
             self.redraw()
 
-    @update_last(get_collide)
-    def resizeAction(self, e):      # TODO: Добавить куммулятивную часть и ее отправлять
+    @update_last_cumulative(get_collide)
+    def resizeAction(self, e):
         if self.last_draw is not None:
-            self.networkProxy.resize(self.last_draw,
-                                     self.camera.abs(e.position().x() - self.last_x),
-                                     self.camera.abs(e.position().y() - self.last_y))
+            self.last_draw.resize(self.camera.abs(e.position().x() - self.last_x),
+                                  self.camera.abs(e.position().y() - self.last_y))
+            # self.networkProxy.resize(self.last_draw,
+            #                          self.camera.abs(e.position().x() - self.last_x),
+            #                          self.camera.abs(e.position().y() - self.last_y))
             self.redraw()
 
     @update_last(get_none)
@@ -113,9 +115,19 @@ class Canvas(QLabel):
             if delete_candidate is not None:
                 self.networkProxy.remove(self.objects, delete_candidate)
                 self.redraw()
+        elif self.edit_mode is EditMode.MOVE:
+            self.networkProxy.moveCumulative(self.last_draw,
+                                             self.camera.abs(self.dx_cumulative),
+                                             self.camera.abs(self.dy_cumulative))
+        elif self.edit_mode is EditMode.RESIZE:
+            self.networkProxy.resizeCumulative(self.last_draw,
+                                               self.camera.abs(self.dx_cumulative),
+                                               self.camera.abs(self.dy_cumulative))
 
         self.last_x = None
         self.last_y = None
+        self.dx_cumulative = None
+        self.dy_cumulative = None
         self.last_draw = None
 
     def wheelEvent(self, event: QWheelEvent) -> None:

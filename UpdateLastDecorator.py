@@ -38,3 +38,27 @@ def update_last(new_last_func):
         return wrapper
 
     return update_last_decorator
+
+
+def update_last_cumulative(new_last_func):
+    def update_last_decorator(func):
+        def wrapper(self, e):
+            if self.last_x is None:
+                self.last_x = e.position().x()
+                self.last_y = e.position().y()
+                self.dx_cumulative = 0
+                self.dy_cumulative = 0
+
+                self.last_draw = new_last_func(self, e)
+                return
+
+            func(self, e)
+
+            self.dx_cumulative = self.dx_cumulative + e.position().x() - self.last_x
+            self.dy_cumulative = self.dy_cumulative + e.position().y() - self.last_y
+            self.last_x = e.position().x()
+            self.last_y = e.position().y()
+
+        return wrapper
+
+    return update_last_decorator
