@@ -2,7 +2,7 @@ from enum import Enum
 
 from PyQt6.QtCore import QTimer, QRect, Qt, QPoint
 from PyQt6.QtGui import QPixmap, QPainter, QTransform
-from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout
+from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QSlider, QGridLayout
 
 
 class TimeDuration(Enum):
@@ -14,6 +14,18 @@ class TimeDuration(Enum):
     S_2_12H = 43200
     S_2_D = 86400
     S_2_W = 604800
+
+
+durationDict = {
+    0: TimeDuration.S_2_S,
+    1: TimeDuration.S_2_M,
+    2: TimeDuration.S_2_10M,
+    3: TimeDuration.S_2_30M,
+    4: TimeDuration.S_2_H,
+    5: TimeDuration.S_2_12H,
+    6: TimeDuration.S_2_D,
+    7: TimeDuration.S_2_W,
+}
 
 
 class TimeWidget(QWidget):
@@ -30,8 +42,9 @@ class TimeWidget(QWidget):
         self.clock.setPixmap(pixmap)
         self.verticalLayout.addWidget(self.clock)
 
-        self.timeLabel = QLabel("")
-        self.verticalLayout.addWidget(self.timeLabel)
+        self.sliderLayout = self.addSlider()
+        self.timeDurationSlider.valueChanged.connect(lambda v: self.updateTimePeriod(durationDict[v]))
+        self.verticalLayout.addLayout(self.sliderLayout)
 
         self.setLayout(self.verticalLayout)
 
@@ -39,8 +52,9 @@ class TimeWidget(QWidget):
         self.timer.timeout.connect(self.showTime)
 
         self.time = 0
+        self.days = 0
         self.angle = 0
-        self.timeSpeed = TimeDuration.S_2_30M
+        self.timeSpeed = TimeDuration.S_2_S
         self.showTime()
 
     def showTime(self):
@@ -48,11 +62,11 @@ class TimeWidget(QWidget):
         h = int(self.time / TimeDuration.S_2_H.value)
         m = int((self.time % TimeDuration.S_2_H.value) / TimeDuration.S_2_M.value)
         s = int(self.time % TimeDuration.S_2_M.value)
-        timeString = f"{f'0{h}' if h < 10 else f'{h}'}:"\
-                     f"{f'0{m}' if m < 10 else f'{m}'}:"\
+        timeString = f"{f'0{h}' if h < 10 else f'{h}'}:" \
+                     f"{f'0{m}' if m < 10 else f'{m}'}:" \
                      f"{f'0{s}' if s < 10 else f'{s}'}"
 
-        self.drawTime(timeString)
+        self.drawTime(timeString, f"Day {self.days}")
 
     def startTime(self):
         self.timer.start(1000)
@@ -64,6 +78,7 @@ class TimeWidget(QWidget):
         self.timeSpeed = duration
 
     def updateTime(self, value):
+        self.days = self.days + int((self.time + value) / TimeDuration.S_2_D.value)
         self.time = (self.time + value) % TimeDuration.S_2_D.value
         self.angle = int(self.time / 240)
 
@@ -71,7 +86,7 @@ class TimeWidget(QWidget):
         self.timeSpeed = duration
         self.time = tempTime
 
-    def drawTime(self, timeString):
+    def drawTime(self, timeString, dayString):
         pixmap = self.clock.pixmap()
         painter = QPainter(pixmap)
 
@@ -86,9 +101,38 @@ class TimeWidget(QWidget):
 
         size = QRect(0, 0, self.clock.pixmap().width(), self.clock.pixmap().height())
         painter.drawPixmap(size, self.clockPixmap)
-        point = QPoint(30, 70)
+        point = QPoint(30, 65)
         painter.drawText(point, timeString)
+        point = QPoint(30, 80)
+        painter.drawText(point, dayString)
 
         self.clock.setPixmap(pixmap)
 
         painter.end()
+
+    def addSlider(self):
+        l0 = QLabel("S")
+        l1 = QLabel("M")
+        l2 = QLabel("10M")
+        l3 = QLabel("30M")
+        l4 = QLabel("H")
+        l5 = QLabel("12H")
+        l6 = QLabel("D")
+        l7 = QLabel("W")
+
+        self.timeDurationSlider = QSlider(Qt.Orientation.Horizontal)
+        self.timeDurationSlider.setRange(0, 7)
+
+        layout = QGridLayout()
+        layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        layout.addWidget(self.timeDurationSlider, 0, 0, 1, 8)
+        layout.addWidget(l0, 1, 0, 1, 1)
+        layout.addWidget(l1, 1, 1, 1, 1)
+        layout.addWidget(l2, 1, 2, 1, 1)
+        layout.addWidget(l3, 1, 3, 1, 1)
+        layout.addWidget(l4, 1, 4, 1, 1)
+        layout.addWidget(l5, 1, 5, 1, 1)
+        layout.addWidget(l6, 1, 6, 1, 1)
+        layout.addWidget(l7, 1, 7, 1, 1)
+
+        return layout
