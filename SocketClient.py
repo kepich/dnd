@@ -1,3 +1,4 @@
+import pickle
 import traceback
 
 import socketio
@@ -16,6 +17,8 @@ class SocketClient(QThread):
     chatSignal                  = pyqtSignal(list)
     needFirstLoadSignal         = pyqtSignal()
     firstLoadSignal             = pyqtSignal(FirstLoadDto)
+    weatherTimeSignal           = pyqtSignal(dict)
+    masterFirstLoadSignal       = pyqtSignal()
 
     sio = socketio.Client()
 
@@ -34,6 +37,8 @@ class SocketClient(QThread):
         self.sio.on("chat_msg", self.chatSignal.emit)
         self.sio.on("need_first_load", self.needFirstLoadSignal.emit)
         self.sio.on("first_load", lambda msg: self.firstLoadSignal.emit(FirstLoadDto.fromBytes(msg)))
+        self.sio.on("weather_time", lambda msg: self.weatherTimeSignal.emit(pickle.loads(msg)))
+        self.sio.on("master_first_load", self.masterFirstLoadSignal.emit)
 
         self.isActive = True
 
@@ -59,3 +64,6 @@ class SocketClient(QThread):
 
     def sendFirstLoad(self, msg: FirstLoadDto):
         return self.sio.emit("first_load", msg.toBytes())
+
+    def sendWeather(self, objects):
+        return self.sio.emit("weather_time", pickle.dumps(objects))

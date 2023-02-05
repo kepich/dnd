@@ -41,8 +41,10 @@ class RightPanel(QWidget):
     def addWeatherAndTime(self):
         secondRow = QHBoxLayout()
         self.timeWidget = TimeWidget()
-        self.timeWidget.startTime()
         secondRow.addWidget(self.timeWidget)
-        # secondRow.addWidget(secondRow)
 
         return secondRow
+
+    def setMaster(self):
+        self.timeWidget.startTime()
+

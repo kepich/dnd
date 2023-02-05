@@ -13,7 +13,6 @@ needs_first_load = []
 
 @sio.event
 def connect(sid, environ):
-
     global master
     if master is None:
         print(f"Master: {sid}")
@@ -21,8 +20,8 @@ def connect(sid, environ):
         if len(players.keys()) > 0:
             needs_first_load.append(master)
             sio.emit('need_first_load', to=list(players.keys())[0])
-        # else:
-        #     sio.emit('first_load', data, to=master)
+        else:
+            sio.emit('master_first_load', to=master)
     else:
         print(f"Needs first load: {sid}")
         needs_first_load.append(sid)
@@ -32,6 +31,7 @@ def connect(sid, environ):
 
     sio.emit('player_join', players[sid])
     print('connect ', sid)
+
 
 @sio.on('first_load')
 def first_load(sid, data):
@@ -43,6 +43,7 @@ def first_load(sid, data):
         print(f"Send first load to: {targetSid}")
         sio.emit('first_load', data, to=targetSid)
 
+
 @sio.on('broadcast_msg')
 def my_message(sid, data):
     sio.emit('update', data, skip_sid=sid)
@@ -51,6 +52,11 @@ def my_message(sid, data):
 @sio.on('chat_msg')
 def chat(sid, data):
     sio.emit('chat_msg', [players[sid], data])
+
+
+@sio.on('weather_time')
+def weather(sid, data):
+    sio.emit('weather_time', data, skip_sid=sid)
 
 
 @sio.event

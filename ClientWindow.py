@@ -132,6 +132,10 @@ class ClientWindow(QMainWindow):
         socketClient.needFirstLoadSignal.connect(self.playground.canvas.firstLoad)
         socketClient.firstLoadSignal.connect(self.playground.canvas.loadGame)
 
+        socketClient.weatherTimeSignal.connect(self.playground.rightPanel.timeWidget.setCurrentTimeData)
+        socketClient.masterFirstLoadSignal.connect(self.playground.rightPanel.setMaster)
+
+
     def addChatMessageSlot(self, message):
         self.playground.rightPanel.chatWidget.addChatMessage(message[0], message[1])
 
@@ -146,6 +150,7 @@ class ClientWindow(QMainWindow):
         self.playground.rightPanel.chatWidget.clearChat()
         self.connectAction.setEnabled(True)
         self.disconnectAction.setEnabled(False)
+        self.playground.rightPanel.timeWidget.endTime()
 
         disconnectMessageBox = QMessageBox()
         disconnectMessageBox.setText("Disconnected")

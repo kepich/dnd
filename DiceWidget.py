@@ -1,7 +1,7 @@
 import random
 import time
 
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton, QLabel, QVBoxLayout, QListWidget
 
 
@@ -14,12 +14,13 @@ class DiceWidget(QWidget):
 
         self.diceListLabel = QLabel("")
         self.diceListLabel.setWordWrap(True)
-        self.diceListLabel.setFixedHeight(50)
+        self.diceListLabel.setFixedHeight(30)
         self.diceListLabel.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         self.verticalLayout.addWidget(self.diceListLabel)
 
         self.numerOfDiceList = self.createNumberOfDiceList()
         self.verticalLayout.addWidget(self.numerOfDiceList)
+        self.verticalLayout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout = QGridLayout()
         self.verticalLayout.addLayout(self.gridLayout)
@@ -50,11 +51,15 @@ class DiceWidget(QWidget):
     def createNumberOfDiceList(self):
         res = QListWidget(self)
         res.setFlow(QListWidget.Flow.LeftToRight)
-        res.addItems([f"{i}" for i in range(1, 21)])
+        res.addItems([f"{i + 1}" for i in range(10)])
         res.setSelectionMode(QListWidget.SelectionMode.SingleSelection)
         res.setCurrentRow(0)
-        res.setMaximumHeight(50)
+        res.setMaximumHeight(30)
         res.setStyleSheet("QScrollBar {width:0px;}")
+
+        for i in range(res.count()):
+            item = res.item(i)
+            item.setSizeHint(QSize(27, 20))
 
         return res
 
@@ -69,9 +74,9 @@ class DiceWidget(QWidget):
         summa = str(sum(values))
 
         if selected > 1:
-            res = f"{values[0]}" + ''.join([f" + {i}" for i in values[1:]]) + f" = {summa}"
+            res = f"{values[0]}" + ''.join([f", {i}" for i in values[1:]])
             self.diceListLabel.setText(res)
-            self.parent().parent().canvas.networkProxy.sendMessageToChat(res)
+            self.parent().parent().canvas.networkProxy.sendMessageToChat(res + f" = {summa}")
         else:
             self.diceListLabel.setText("")
             self.parent().parent().canvas.networkProxy.sendMessageToChat(summa)

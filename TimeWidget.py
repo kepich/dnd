@@ -4,6 +4,8 @@ from PyQt6.QtCore import QTimer, QRect, Qt, QPoint
 from PyQt6.QtGui import QPixmap, QPainter, QTransform
 from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QSlider, QGridLayout, QHBoxLayout, QPushButton
 
+from WeatherWidget import WeatherWidget
+
 
 class TimeDuration(Enum):
     S_2_S = 1
@@ -27,6 +29,8 @@ durationDict = {
     7: TimeDuration.S_2_W,
 }
 
+invDurationDict = {v: k for k, v in durationDict.items()}
+
 
 class TimeWidget(QWidget):
 
@@ -36,11 +40,16 @@ class TimeWidget(QWidget):
         self.clockPixmap = QPixmap("resources/clock.png")
 
         self.verticalLayout = QVBoxLayout()
+        self.clockHLayout = QHBoxLayout()
         self.clock = QLabel("")
         pixmap = QPixmap(100, 100)
         pixmap.fill(Qt.GlobalColor.transparent)
         self.clock.setPixmap(pixmap)
-        self.verticalLayout.addWidget(self.clock)
+        self.clockHLayout.addWidget(self.clock)
+        self.weatherWidget = WeatherWidget()
+        self.clockHLayout.addWidget(self.weatherWidget)
+
+        self.verticalLayout.addLayout(self.clockHLayout)
 
         self.hLayout = QHBoxLayout()
 
@@ -54,7 +63,8 @@ class TimeWidget(QWidget):
         vLayout.addWidget(self.midnightButton)
 
         self.sliderLayout = self.addSlider()
-        self.timeDurationSlider.valueChanged.connect(lambda v: self.setTimeSpeed(durationDict[v]))
+        self.timeDurationSlider.sliderReleased.connect(self.setTimeSpeed)
+
         self.hLayout.addLayout(self.sliderLayout)
         self.verticalLayout.addLayout(self.hLayout)
 
@@ -65,15 +75,14 @@ class TimeWidget(QWidget):
 
         self.time = 0
         self.days = 0
-        self.angle = 0
         self.timeSpeed = TimeDuration.S_2_S
-        self.showTime()
+        self.drawAllTime()
 
     def setTime(self, time: int):
         self.time = time
 
-    def setTimeSpeed(self, duration: TimeDuration):
-        self.timeSpeed = duration
+    def setTimeSpeed(self):
+        self.timeSpeed = durationDict[self.timeDurationSlider.value()]
 
     def startTime(self):
         self.timer.start(1000)
@@ -83,6 +92,10 @@ class TimeWidget(QWidget):
 
     def showTime(self):
         self.updateTime(self.timeSpeed.value)
+        self.drawAllTime()
+        self.parent().parent().canvas.networkProxy.weatherSend(self.getCurrentTimeData())
+
+    def drawAllTime(self):
         h = int(self.time / TimeDuration.S_2_H.value)
         m = int((self.time % TimeDuration.S_2_H.value) / TimeDuration.S_2_M.value)
         s = int(self.time % TimeDuration.S_2_M.value)
@@ -94,12 +107,11 @@ class TimeWidget(QWidget):
 
     def updateTime(self, value):
         self.days = self.days + int((self.time + value) / TimeDuration.S_2_D.value)
+        dh = int((self.time + value) / TimeDuration.S_2_H.value) - int(self.time / TimeDuration.S_2_H.value)
         self.time = (self.time + value) % TimeDuration.S_2_D.value
-        self.angle = int(self.time / 240) + 180
 
-    def syncTime(self, tempTime, duration: TimeDuration):
-        self.timeSpeed = duration
-        self.time = tempTime
+        for _ in range(dh):
+            self.weatherWidget.updateWeather()
 
     def drawClock(self, timeString, dayString):
         pixmap = self.clock.pixmap()
@@ -108,7 +120,7 @@ class TimeWidget(QWidget):
         painter.begin(pixmap)
 
         size = QRect(5, 5, self.clock.pixmap().width() - 10, self.clock.pixmap().height() - 10)
-        transform = QTransform().rotate(self.angle)
+        transform = QTransform().rotate(int(self.time / 240) + 180)
         rotated = self.timerPixmap.transformed(transform)
         painter.drawPixmap(size, rotated.copy((rotated.width() - self.timerPixmap.width()) / 2,
                                               (rotated.height() - self.timerPixmap.height()) / 2,
@@ -152,3 +164,20 @@ class TimeWidget(QWidget):
         layout.addWidget(l7, 1, 7, 1, 1)
 
         return layout
+
+    def getCurrentTimeData(self) -> dict:
+        return {
+            "time": self.time,
+            "days": self.days,
+            "timeSpeed": self.timeSpeed,
+            "weather": self.weatherWidget.getTempWeather()
+        }
+
+    def setCurrentTimeData(self, data: dict):
+        self.time = data["time"]
+        self.days = data["days"]
+        self.timeSpeed = data["timeSpeed"]
+        self.timeDurationSlider.setValue(invDurationDict[self.timeSpeed])
+        self.weatherWidget.setTempWeather(data["weather"])
+        self.weatherWidget.drawWeather()
+        self.drawAllTime()

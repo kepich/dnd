@@ -46,3 +46,6 @@ class NetworkProxy:
 
     def firstLoad(self, objects):
         self.socketClient.sendFirstLoad(FirstLoadDto(objects))
+
+    def weatherSend(self, objects):
+        self.socketClient.sendWeather(objects)

@@ -14,6 +14,7 @@ class ChatWidget(QWidget):
 
     def addChatMessage(self, fromUser, msg):
         self.chat.addItem(f"{fromUser}> {msg}")
+        self.chat.scrollToBottom()
 
     def clearChat(self):
         self.chat.clear()

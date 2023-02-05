@@ -25,3 +25,6 @@ class LocalProxy:
 
     def firstLoad(self, objects):
         pass
+
+    def weatherSend(self, objects):
+        pass
