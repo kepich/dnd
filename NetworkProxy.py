@@ -49,3 +49,6 @@ class NetworkProxy:
 
     def weatherSend(self, objects):
         self.socketClient.sendWeather(objects)
+
+    def caveSend(self, value):
+        self.socketClient.caveSend(value)

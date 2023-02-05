@@ -40,5 +40,7 @@ class Proxy:
         self.tempProxy.firstLoad(objects)
 
     def weatherSend(self, objects):
-        print(objects)
         self.tempProxy.weatherSend(objects)
+
+    def caveSend(self, value):
+        self.tempProxy.caveSend(value)

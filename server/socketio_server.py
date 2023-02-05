@@ -59,6 +59,12 @@ def weather(sid, data):
     sio.emit('weather_time', data, skip_sid=sid)
 
 
+@sio.on('cave_darkness')
+def weather(sid, data):
+    print(data)
+    sio.emit('cave_darkness', data)
+
+
 @sio.event
 def disconnect(sid):
     sio.emit('player_leave', players[sid], skip_sid=sid)

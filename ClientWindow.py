@@ -115,6 +115,8 @@ class ClientWindow(QMainWindow):
                                         translit(dlg.nicknameTextBox.text(), language_code="ru", reversed=True))
             self.playground.canvas.networkProxy.connect(socketClient)
             self.connectSocketSignals(socketClient)
+            self.playground.rightPanel.chatWidget.nickname = dlg.nicknameTextBox.text()
+            self.playground.rightPanel.chatWidget.clearChat()
 
             self.connectAction.setEnabled(False)
             self.disconnectAction.setEnabled(True)
@@ -135,6 +137,7 @@ class ClientWindow(QMainWindow):
         socketClient.weatherTimeSignal.connect(self.playground.rightPanel.timeWidget.setCurrentTimeData)
         socketClient.masterFirstLoadSignal.connect(self.playground.rightPanel.setMaster)
 
+        socketClient.caveDarknessSignal.connect(self.playground.rightPanel.setCaveDarkness)
 
     def addChatMessageSlot(self, message):
         self.playground.rightPanel.chatWidget.addChatMessage(message[0], message[1])

@@ -29,6 +29,12 @@ class Canvas(QLabel):
         self.objects = []
         self.last_draw = None
 
+        self.isDarknessVisible = True
+        self.isCave = False
+        self.darknessValue = 0.90
+        self.darknessFootage = QPixmap(100, 100)
+        self.darknessFootage.fill(Qt.GlobalColor.black)
+
         self.camera = Camera(self.width(), self.height())
         self.networkProxy = Proxy()
 
@@ -198,6 +204,17 @@ class Canvas(QLabel):
 
         if self.isGridVisible:
             self.drawGrid(pixmap)
+
+        painter.begin(pixmap)
+        if self.isDarknessVisible:
+            if self.isCave:
+                painter.setOpacity(1)
+            else:
+                painter.setOpacity(self.darknessValue)
+            painter.drawPixmap(pixmap.rect(), self.darknessFootage)
+        painter.end()
+
+
         self.setPixmap(pixmap)
 
     def clearAll(self):
@@ -212,6 +229,14 @@ class Canvas(QLabel):
 
     def setGridVisibility(self, status):
         self.isGridVisible = status
+        self.redraw()
+
+    def setDarknessVisibility(self, status):
+        self.isDarknessVisible = status
+        self.redraw()
+
+    def setCaveDarkness(self, status):
+        self.isCave = status
         self.redraw()
 
     def findObjectByUUID(self, uuid):

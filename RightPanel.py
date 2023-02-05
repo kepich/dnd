@@ -1,3 +1,4 @@
+from PyQt6.QtCore import QSignalBlocker
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QCheckBox, QHBoxLayout, QListWidget
 
 from ChatWidget import ChatWidget
@@ -18,7 +19,7 @@ class RightPanel(QWidget):
         self.diceWidget = DiceWidget(self)
         self.vertical_layout.addWidget(self.diceWidget)
         self.vertical_layout.addStretch(1)
-        self.chatWidget = ChatWidget()
+        self.chatWidget = ChatWidget(self)
         self.vertical_layout.addWidget(self.chatWidget)
         self.vertical_layout.setContentsMargins(0, 0, 0, 0)
 
@@ -36,11 +37,24 @@ class RightPanel(QWidget):
         layout.addWidget(self.showGridCheckBox)
 
         self.darknessCheckBox = QCheckBox("Darkness")
+        self.darknessCheckBox.setChecked(True)
+        self.darknessCheckBox.stateChanged.connect(self.parent().canvas.setDarknessVisibility)
         layout.addWidget(self.darknessCheckBox)
+
+        self.caveCheckBox = QCheckBox("Cave")
+        self.caveCheckBox.setChecked(False)
+        self.caveCheckBox.stateChanged.connect(self.parent().canvas.networkProxy.caveSend)
+        layout.addWidget(self.caveCheckBox)
+
+    def setCaveDarkness(self, value):
+        with QSignalBlocker(self.caveCheckBox) as blocker:
+            self.caveCheckBox.setChecked(value)
+        self.parent().canvas.setCaveDarkness(value)
+
 
     def addWeatherAndTime(self):
         secondRow = QHBoxLayout()
-        self.timeWidget = TimeWidget()
+        self.timeWidget = TimeWidget(self)
         secondRow.addWidget(self.timeWidget)
 
         return secondRow

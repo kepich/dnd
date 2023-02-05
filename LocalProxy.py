@@ -28,3 +28,6 @@ class LocalProxy:
 
     def weatherSend(self, objects):
         pass
+
+    def caveSend(self, value):
+        pass

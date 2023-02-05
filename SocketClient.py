@@ -19,6 +19,7 @@ class SocketClient(QThread):
     firstLoadSignal             = pyqtSignal(FirstLoadDto)
     weatherTimeSignal           = pyqtSignal(dict)
     masterFirstLoadSignal       = pyqtSignal()
+    caveDarknessSignal          = pyqtSignal(bool)
 
     sio = socketio.Client()
 
@@ -39,6 +40,7 @@ class SocketClient(QThread):
         self.sio.on("first_load", lambda msg: self.firstLoadSignal.emit(FirstLoadDto.fromBytes(msg)))
         self.sio.on("weather_time", lambda msg: self.weatherTimeSignal.emit(pickle.loads(msg)))
         self.sio.on("master_first_load", self.masterFirstLoadSignal.emit)
+        self.sio.on("cave_darkness", lambda msg: self.caveDarknessSignal.emit(pickle.loads(msg)))
 
         self.isActive = True
 
@@ -67,3 +69,6 @@ class SocketClient(QThread):
 
     def sendWeather(self, objects):
         return self.sio.emit("weather_time", pickle.dumps(objects))
+
+    def caveSend(self, value):
+        return self.sio.emit("cave_darkness", pickle.dumps(value))
