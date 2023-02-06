@@ -4,8 +4,7 @@ from PyQt6.QtWidgets import QLabel, QApplication, QSizePolicy
 
 from Action import Action
 from Camera import Camera
-from EditModeEnum import EditMode
-from FirstLoadDto import FirstLoadDto
+from EditMode import EditMode
 from Message import Message
 from Proxy import Proxy
 from UpdateLastDecorator import *
@@ -261,9 +260,8 @@ class Canvas(QLabel):
 
     def firstLoad(self):
         self.networkProxy.firstLoad(self.objects)
-        # TODO: Может быть стоит отправлять тут и чат тоже
 
-    def loadGame(self, data: FirstLoadDto):
-        for obj in data.objects:
-            self.objects.append(obj)
+    def loadGame(self, data: list[dict]):
+        for obj in data:
+            self.objects.append(DrawableObject.deserialize(obj))
         self.redraw()

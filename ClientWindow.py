@@ -1,9 +1,9 @@
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QKeyEvent, QCursor
+from PyQt6.QtGui import QKeyEvent, QCursor, QResizeEvent
 from PyQt6.QtWidgets import QMainWindow, QWidgetAction, QToolBar, QMessageBox
 from transliterate import translit
 
-from EditModeEnum import EditMode
+from EditMode import EditMode
 from EnterDialog import EnterDialog
 from Playground import Playground
 from SocketClient import SocketClient
@@ -19,7 +19,8 @@ class ClientWindow(QMainWindow):
         self.setCentralWidget(self.playground)
 
         self.createToolBar()
-        self.showFullScreen()
+        self.showMaximized()
+        # self.showFullScreen()
 
     def createToolBar(self):
         self.createToolBarActions()
@@ -164,3 +165,6 @@ class ClientWindow(QMainWindow):
             if ev.key() == Qt.Key.Key_V:
                 point = self.mapFromParent(QCursor.pos())
                 self.playground.canvas.paste(x_pos=point.x(), y_pos=point.y())
+
+    def resizeEvent(self, a0: QResizeEvent) -> None:
+        self.playground.resizeEvent(a0)

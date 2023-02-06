@@ -1,4 +1,5 @@
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QResizeEvent
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QGridLayout
 
 from Canvas import Canvas
@@ -34,3 +35,6 @@ class Playground(QWidget):
             b = QPaletteButton(c)
             b.pressed.connect(lambda c=c: self.canvas.setPenColor(c))
             layout.addWidget(b)
+
+    def resizeEvent(self, a0: QResizeEvent) -> None:
+        self.canvas.resizeEvent(a0)

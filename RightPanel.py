@@ -1,5 +1,5 @@
 from PyQt6.QtCore import QSignalBlocker
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QCheckBox, QHBoxLayout, QListWidget
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QCheckBox, QHBoxLayout
 
 from ChatWidget import ChatWidget
 from DiceWidget import DiceWidget

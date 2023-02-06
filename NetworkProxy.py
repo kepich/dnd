@@ -1,7 +1,6 @@
 from PyQt6.QtWidgets import QMessageBox
 
 from Action import Action
-from FirstLoadDto import FirstLoadDto
 from Message import Message
 from SocketClient import SocketClient
 
@@ -45,7 +44,7 @@ class NetworkProxy:
         self.socketClient.sendChatMessage(msg)
 
     def firstLoad(self, objects):
-        self.socketClient.sendFirstLoad(FirstLoadDto(objects))
+        self.socketClient.sendFirstLoad([obj.serialize() for obj in objects])
 
     def weatherSend(self, objects):
         self.socketClient.sendWeather(objects)

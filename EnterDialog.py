@@ -56,16 +56,14 @@ class EnterDialog(QDialog):
         lineEdit = QLineEdit()
         ipRange = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])"
         ipRegex = QRegularExpression("^" + ipRange + "\\." + ipRange + "\\." + ipRange + "\\." + ipRange + "$")
-        self.ipValidator = QRegularExpressionValidator(ipRegex, self)
-        lineEdit.setValidator(self.ipValidator)
+        lineEdit.setValidator(QRegularExpressionValidator(ipRegex, self))
         lineEdit.setText("127.0.0.1")
 
         return lineEdit
 
     def createPortLineEdit(self):
         lineEdit = QLineEdit()
-        self.portValidator = QIntValidator(0, 65353, self)
-        lineEdit.setValidator(self.portValidator)
+        lineEdit.setValidator(QIntValidator(0, 65353, self))
         lineEdit.setText("50022")
 
         return lineEdit
