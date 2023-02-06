@@ -1,4 +1,3 @@
-import pickle
 import uuid
 
 from PyQt6.QtCore import Qt, QRect, QByteArray, QDataStream, QIODevice
@@ -19,16 +18,6 @@ class PixmapDto:
         self.pixmap = QPixmap()
         stream = QDataStream(buffer, QIODevice.OpenModeFlag.ReadOnly)
         stream >> self.pixmap
-
-
-class DrawableObjectDto:
-    def __init__(self, q_rect, uuid, pixmap):
-        self.q_rect = q_rect
-        self.uuid = uuid
-        self.pixmapDto: PixmapDto = PixmapDto(pixmap)
-
-    def deserialize(drawableObjectDtoBytes):
-        return pickle.loads(drawableObjectDtoBytes)
 
 
 class DrawableObject:
@@ -73,13 +62,15 @@ class DrawableObject:
                self.q_rect.y() < y < self.q_rect.y() + self.q_rect.height()
 
     def serialize(self):
-        return pickle.dumps(DrawableObjectDto(self.q_rect, self.uuid, self.pixmap))
+        return {
+            "q_rect": self.q_rect,
+            "uuid": self.uuid,
+            "pixmapDto": PixmapDto(self.pixmap)
+        }
 
-    def deserializeFromDtoBytes(dtoBytes):
-        dto = DrawableObjectDto.deserialize(dtoBytes)
+    def deserialize(dictionary: dict):
         res = DrawableObject(0, 0, 0, 0, QPixmap(1, 1))
-        res.q_rect = dto.q_rect
-        res.pixmap = dto.pixmapDto.pixmap
-        res.uuid = dto.uuid
-
+        res.q_rect = dictionary["q_rect"]
+        res.pixmap = dictionary["pixmapDto"].pixmap
+        res.uuid = dictionary["uuid"]
         return res

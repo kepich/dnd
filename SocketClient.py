@@ -32,7 +32,7 @@ class SocketClient(QThread):
         self.headers = {"nickname": nickname}
 
         self.sio.on("connect", self.connectionEstablishedSignal.emit)
-        self.sio.on("update", lambda msg: self.receivedSignal.emit(Message.fromBytes(msg)))
+        self.sio.on("update", lambda msg: self.receivedSignal.emit(pickle.loads(msg)))
         self.sio.on("player_join", self.playerJoinSignal.emit)
         self.sio.on("player_leave", self.playerLeaveSignal.emit)
         self.sio.on("chat_msg", self.chatSignal.emit)
@@ -52,7 +52,7 @@ class SocketClient(QThread):
                 if len(self.queue) > 0:
                     msg = self.queue[0]
                     self.queue.remove(msg)
-                    self.sio.emit('broadcast_msg', msg.toBytes())
+                    self.sio.emit('broadcast_msg', pickle.dumps(msg))
         except:
             traceback.print_exc()
             self.connectionRejectedSignal.emit()
@@ -65,7 +65,7 @@ class SocketClient(QThread):
         return self.sio.emit("chat_msg", msg)
 
     def sendFirstLoad(self, msg: FirstLoadDto):
-        return self.sio.emit("first_load", msg.toBytes())
+        return self.sio.emit("first_load", pickle.dumps(msg))
 
     def sendWeather(self, objects):
         return self.sio.emit("weather_time", pickle.dumps(objects))

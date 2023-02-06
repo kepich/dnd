@@ -244,7 +244,7 @@ class Canvas(QLabel):
 
     def updateFromNetwork(self, msg: Message):
         if msg.action is Action.CREATE:
-            self.objects.append(DrawableObject.deserializeFromDtoBytes(msg.drawableObject))
+            self.objects.append(DrawableObject.deserialize(msg.drawableObject))
         elif msg.action is Action.MOVE:
             obj: DrawableObject = self.findObjectByUUID(msg.uuid)
             obj.move(msg.dx, msg.dy)

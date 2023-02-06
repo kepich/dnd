@@ -110,12 +110,12 @@ class TimeWidget(QWidget):
     def nightRedraw(self, h, oldTime):
         oh = int(oldTime / TimeDuration.S_2_H.value)
         if h != oh:
-            max_darkness = 0.90 / 4
+            max_darkness = 0.90
             if 22 >= h >= 18:
-                self.parent().parent().canvas.darknessValue = max_darkness * (h - 18)
+                self.parent().parent().canvas.darknessValue = max_darkness / 4 * (h - 18)
                 self.parent().parent().canvas.redraw()
             elif 6 <= h <= 10:
-                self.parent().parent().canvas.darknessValue = max_darkness * (10 - h)
+                self.parent().parent().canvas.darknessValue = max_darkness / 4 * (10 - h)
                 self.parent().parent().canvas.redraw()
             elif 18 > h > 10:
                 self.parent().parent().canvas.darknessValue = 0

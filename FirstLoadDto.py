@@ -10,10 +10,7 @@ class FirstLoadDto:
         else:
             self.objects = [obj.serialize() for obj in objects]
 
-    def toBytes(self):
-        return pickle.dumps(self)
-
     def fromBytes(bytes):
         dto = pickle.loads(bytes)
-        dto.objects = [DrawableObject.deserializeFromDtoBytes(i) for i in dto.objects]
+        dto.objects = [DrawableObject.deserialize(i) for i in dto.objects]
         return dto

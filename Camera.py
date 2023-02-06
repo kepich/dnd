@@ -63,4 +63,4 @@ class Camera:
         return self.abs(self.MAX_HEIGHT)
 
     def getCollide(self, x, y, objects):
-        return next(filter(lambda obj: obj.is_collide(self.x_abs(x), self.y_abs(y)), objects), None)
+        return next(filter(lambda obj: obj.is_collide(self.x_abs(x), self.y_abs(y)), reversed(objects)), None)
