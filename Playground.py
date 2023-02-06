@@ -45,8 +45,13 @@ class Playground(QWidget):
             "weatherTime": self.rightPanel.timeWidget.getCurrentTimeData()
         }
 
+    def storeScene(self) -> dict:
+        return {"canvas": self.canvas.storeScene()}
+
     def restoreGame(self, data: dict):
         self.canvas.restoreGame(data["canvas"])
-        self.rightPanel.timeWidget.setCurrentTimeData(data["weatherTime"])
+
+        if "weatherTime" in data.keys():
+            self.rightPanel.timeWidget.setCurrentTimeData(data["weatherTime"])
 
         self.rightPanel.setCaveDarkness(data["canvas"]["isCave"])

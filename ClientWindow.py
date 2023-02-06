@@ -6,6 +6,7 @@ from transliterate import translit
 from EditMode import EditMode
 from EnterDialog import EnterDialog
 from LoadDialog import LoadDialog
+from LoadSceneDialog import LoadSceneDialog
 from Playground import Playground
 from SaveDialog import SaveDialog
 from SaveManager import SaveManager
@@ -35,10 +36,15 @@ class ClientWindow(QMainWindow):
         tool_bar.addAction(self.drawAction)
         tool_bar.addAction(self.clearCanvasAction)
         tool_bar.addAction(self.undoAction)
+        tool_bar.addSeparator()
         tool_bar.addAction(self.connectAction)
         tool_bar.addAction(self.disconnectAction)
+        tool_bar.addSeparator()
         tool_bar.addAction(self.saveAction)
         tool_bar.addAction(self.loadAction)
+        tool_bar.addAction(self.saveSceneAction)
+        tool_bar.addAction(self.loadSceneAction)
+        tool_bar.addSeparator()
         tool_bar.addAction(self.exitAction)
 
         self.addToolBar(Qt.ToolBarArea.LeftToolBarArea, tool_bar)
@@ -85,6 +91,14 @@ class ClientWindow(QMainWindow):
         self.loadAction = QWidgetAction(self)
         self.loadAction.setText("Load")
         self.loadAction.triggered.connect(self.loadSlot)
+
+        self.saveSceneAction = QWidgetAction(self)
+        self.saveSceneAction.setText("Save scene")
+        self.saveSceneAction.triggered.connect(self.saveSceneSlot)
+
+        self.loadSceneAction = QWidgetAction(self)
+        self.loadSceneAction.setText("Load scene")
+        self.loadSceneAction.triggered.connect(self.loadSceneSlot)
 
         self.exitAction = QWidgetAction(self)
         self.exitAction.setText("Exit")
@@ -185,6 +199,18 @@ class ClientWindow(QMainWindow):
         dlg = SaveDialog(self)
         if dlg.exec():
             self.saveManager.save(dlg.saveNameTextBox.text(), self.playground.storeGame())
+
+    def saveSceneSlot(self):
+        dlg = SaveDialog(self)
+        if dlg.exec():
+            self.saveManager.saveScene(dlg.saveNameTextBox.text(), self.playground.storeScene())
+
+    def loadSceneSlot(self):
+        dlg = LoadSceneDialog(self)
+        if dlg.exec():
+            loadedData = self.saveManager.loadScene(dlg.getChosenSave())
+            self.playground.restoreGame(loadedData)
+            self.playground.canvas.networkProxy.sendLoad(loadedData)
 
     def keyPressEvent(self, ev: QKeyEvent) -> None:
         if ev.modifiers() & Qt.KeyboardModifier.ControlModifier:

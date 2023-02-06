@@ -274,7 +274,17 @@ class Canvas(QLabel):
         }
 
     def restoreGame(self, state: dict):
-        self.darknessValue = state["darknessValue"]
-        self.isDarknessVisible = state["isDarknessVisible"]
+        if "darknessValue" in state.keys():
+            self.darknessValue = state["darknessValue"]
+
+        if "isDarknessVisible" in state.keys():
+            self.isDarknessVisible = state["isDarknessVisible"]
+
         self.isCave = state["isCave"]
         self.syncObjects(state["objects"])
+
+    def storeScene(self):
+        return {
+            "objects": [i.serialize() for i in self.objects],
+            "isCave": self.isCave
+        }
