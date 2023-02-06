@@ -1,4 +1,5 @@
 import pickle
+from os import listdir
 
 
 class SaveManager:
@@ -11,7 +12,9 @@ class SaveManager:
         f.close()
 
     def load(self, saveName: str) -> dict:
-        file_name = f'{self.saves_path}{saveName}.save'
+        file_name = f'{self.saves_path}{saveName}'
         f = open(file_name, 'rb')
-        f.read()
         return pickle.loads(f.read())
+
+    def getSaves(self):
+        return [f for f in listdir(self.saves_path)]

@@ -40,13 +40,17 @@ def first_load(sid, data):
     while len(needs_first_load) > 0:
         targetSid = needs_first_load[0]
         needs_first_load.remove(targetSid)
-        print(f"Send first load to: {targetSid}")
-        sio.emit('first_load', data, to=targetSid)
+        sio.emit('load', data, to=targetSid)
 
 
 @sio.on('broadcast_msg')
 def my_message(sid, data):
     sio.emit('update', data, skip_sid=sid)
+
+
+@sio.on('load')
+def load(sid, data):
+    sio.emit('load', data, skip_sid=sid)
 
 
 @sio.on('chat_msg')

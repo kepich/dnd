@@ -1,4 +1,4 @@
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QSignalBlocker
 from PyQt6.QtGui import QResizeEvent
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QGridLayout
 
@@ -48,3 +48,5 @@ class Playground(QWidget):
     def restoreGame(self, data: dict):
         self.canvas.restoreGame(data["canvas"])
         self.rightPanel.timeWidget.setCurrentTimeData(data["weatherTime"])
+
+        self.rightPanel.setCaveDarkness(data["canvas"]["isCave"])

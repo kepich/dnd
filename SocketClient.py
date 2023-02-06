@@ -15,10 +15,10 @@ class SocketClient(QThread):
     playerLeaveSignal           = pyqtSignal(str)
     chatSignal                  = pyqtSignal(list)
     needFirstLoadSignal         = pyqtSignal()
-    firstLoadSignal             = pyqtSignal(list)
     weatherTimeSignal           = pyqtSignal(dict)
     masterFirstLoadSignal       = pyqtSignal()
     caveDarknessSignal          = pyqtSignal(bool)
+    loadSignal                  = pyqtSignal(dict)
 
     sio = socketio.Client()
 
@@ -36,10 +36,10 @@ class SocketClient(QThread):
         self.sio.on("player_leave", self.playerLeaveSignal.emit)
         self.sio.on("chat_msg", self.chatSignal.emit)
         self.sio.on("need_first_load", self.needFirstLoadSignal.emit)
-        self.sio.on("first_load", lambda msg: self.firstLoadSignal.emit(pickle.loads(msg)))
         self.sio.on("weather_time", lambda msg: self.weatherTimeSignal.emit(pickle.loads(msg)))
         self.sio.on("master_first_load", self.masterFirstLoadSignal.emit)
         self.sio.on("cave_darkness", lambda msg: self.caveDarknessSignal.emit(pickle.loads(msg)))
+        self.sio.on("load", lambda msg: self.loadSignal.emit(pickle.loads(msg)))
 
         self.isActive = True
 
@@ -63,7 +63,7 @@ class SocketClient(QThread):
     def sendChatMessage(self, msg: str):
         return self.sio.emit("chat_msg", msg)
 
-    def sendFirstLoad(self, msg: list[dict]):
+    def sendFirstLoad(self, msg: dict):
         return self.sio.emit("first_load", pickle.dumps(msg))
 
     def sendWeather(self, objects):
@@ -71,3 +71,6 @@ class SocketClient(QThread):
 
     def caveSend(self, value):
         return self.sio.emit("cave_darkness", pickle.dumps(value))
+
+    def sendLoad(self, data: dict):
+        return self.sio.emit("load", pickle.dumps(data))

@@ -44,3 +44,6 @@ class Proxy:
 
     def caveSend(self, value):
         self.tempProxy.caveSend(value)
+
+    def sendLoad(self, data: dict):
+        self.tempProxy.sendLoad(data)

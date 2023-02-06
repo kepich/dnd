@@ -5,7 +5,9 @@ from transliterate import translit
 
 from EditMode import EditMode
 from EnterDialog import EnterDialog
+from LoadDialog import LoadDialog
 from Playground import Playground
+from SaveDialog import SaveDialog
 from SaveManager import SaveManager
 from SocketClient import SocketClient
 
@@ -36,6 +38,7 @@ class ClientWindow(QMainWindow):
         tool_bar.addAction(self.connectAction)
         tool_bar.addAction(self.disconnectAction)
         tool_bar.addAction(self.saveAction)
+        tool_bar.addAction(self.loadAction)
         tool_bar.addAction(self.exitAction)
 
         self.addToolBar(Qt.ToolBarArea.LeftToolBarArea, tool_bar)
@@ -142,8 +145,9 @@ class ClientWindow(QMainWindow):
         socketClient.playerLeaveSignal.connect(self.playerLeaveSlot)
         socketClient.chatSignal.connect(self.addChatMessageSlot)
 
-        socketClient.needFirstLoadSignal.connect(self.playground.canvas.firstLoad)
-        socketClient.firstLoadSignal.connect(self.playground.canvas.syncObjects)
+        socketClient.needFirstLoadSignal.connect(
+            lambda: self.playground.canvas.networkProxy.firstLoad(self.playground.storeGame()))
+        socketClient.loadSignal.connect(self.playground.restoreGame)
 
         socketClient.weatherTimeSignal.connect(self.playground.rightPanel.timeWidget.setCurrentTimeData)
         socketClient.masterFirstLoadSignal.connect(self.playground.rightPanel.setMaster)
@@ -173,13 +177,14 @@ class ClientWindow(QMainWindow):
     def loadSlot(self):
         dlg = LoadDialog(self)
         if dlg.exec():
-            self.playground.restoreGame(self.saveManager.load(dlg.saveNameTextBox.text()))
+            loadedData = self.saveManager.load(dlg.getChosenSave())
+            self.playground.restoreGame(loadedData)
+            self.playground.canvas.networkProxy.sendLoad(loadedData)
 
     def saveSlot(self):
         dlg = SaveDialog(self)
         if dlg.exec():
             self.saveManager.save(dlg.saveNameTextBox.text(), self.playground.storeGame())
-
 
     def keyPressEvent(self, ev: QKeyEvent) -> None:
         if ev.modifiers() & Qt.KeyboardModifier.ControlModifier:

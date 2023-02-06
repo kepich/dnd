@@ -1,4 +1,4 @@
-from PyQt6.QtCore import QTimer, QRect, Qt, QPoint
+from PyQt6.QtCore import QTimer, QRect, Qt, QPoint, QSignalBlocker
 from PyQt6.QtGui import QPixmap, QPainter, QTransform
 from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QSlider, QGridLayout, QHBoxLayout, QPushButton
 

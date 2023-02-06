@@ -44,10 +44,14 @@ class NetworkProxy:
         self.socketClient.sendChatMessage(msg)
 
     def firstLoad(self, objects):
-        self.socketClient.sendFirstLoad([obj.serialize() for obj in objects])
+        self.socketClient.sendFirstLoad(objects)
 
     def weatherSend(self, objects):
         self.socketClient.sendWeather(objects)
 
     def caveSend(self, value):
         self.socketClient.caveSend(value)
+
+    def sendLoad(self, data):
+        self.socketClient.sendLoad(data)
+

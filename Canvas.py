@@ -213,7 +213,6 @@ class Canvas(QLabel):
             painter.drawPixmap(pixmap.rect(), self.darknessFootage)
         painter.end()
 
-
         self.setPixmap(pixmap)
 
     def clearAll(self):
@@ -271,7 +270,7 @@ class Canvas(QLabel):
             "objects": [i.serialize() for i in self.objects],
             "darknessValue": self.darknessValue,
             "isDarknessVisible": True,
-            "isCave": True
+            "isCave": self.isCave
         }
 
     def restoreGame(self, state: dict):

@@ -31,3 +31,6 @@ class LocalProxy:
 
     def caveSend(self, value):
         pass
+
+    def sendLoad(self, data):
+        pass
