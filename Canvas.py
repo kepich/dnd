@@ -261,7 +261,21 @@ class Canvas(QLabel):
     def firstLoad(self):
         self.networkProxy.firstLoad(self.objects)
 
-    def loadGame(self, data: list[dict]):
+    def syncObjects(self, data: list[dict]):
         for obj in data:
             self.objects.append(DrawableObject.deserialize(obj))
         self.redraw()
+
+    def storeGame(self) -> dict:
+        return {
+            "objects": [i.serialize() for i in self.objects],
+            "darknessValue": self.darknessValue,
+            "isDarknessVisible": True,
+            "isCave": True
+        }
+
+    def restoreGame(self, state: dict):
+        self.darknessValue = state["darknessValue"]
+        self.isDarknessVisible = state["isDarknessVisible"]
+        self.isCave = state["isCave"]
+        self.syncObjects(state["objects"])

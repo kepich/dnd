@@ -6,6 +6,7 @@ from transliterate import translit
 from EditMode import EditMode
 from EnterDialog import EnterDialog
 from Playground import Playground
+from SaveManager import SaveManager
 from SocketClient import SocketClient
 
 
@@ -20,7 +21,7 @@ class ClientWindow(QMainWindow):
 
         self.createToolBar()
         self.showMaximized()
-        # self.showFullScreen()
+        self.saveManager = SaveManager()
 
     def createToolBar(self):
         self.createToolBarActions()
@@ -34,6 +35,7 @@ class ClientWindow(QMainWindow):
         tool_bar.addAction(self.undoAction)
         tool_bar.addAction(self.connectAction)
         tool_bar.addAction(self.disconnectAction)
+        tool_bar.addAction(self.saveAction)
         tool_bar.addAction(self.exitAction)
 
         self.addToolBar(Qt.ToolBarArea.LeftToolBarArea, tool_bar)
@@ -72,6 +74,14 @@ class ClientWindow(QMainWindow):
         self.disconnectAction.setEnabled(False)
         self.disconnectAction.setText("Disconnect")
         self.disconnectAction.triggered.connect(self.disconnectSlot)
+
+        self.saveAction = QWidgetAction(self)
+        self.saveAction.setText("Save")
+        self.saveAction.triggered.connect(self.saveSlot)
+
+        self.loadAction = QWidgetAction(self)
+        self.loadAction.setText("Load")
+        self.loadAction.triggered.connect(self.loadSlot)
 
         self.exitAction = QWidgetAction(self)
         self.exitAction.setText("Exit")
@@ -133,7 +143,7 @@ class ClientWindow(QMainWindow):
         socketClient.chatSignal.connect(self.addChatMessageSlot)
 
         socketClient.needFirstLoadSignal.connect(self.playground.canvas.firstLoad)
-        socketClient.firstLoadSignal.connect(self.playground.canvas.loadGame)
+        socketClient.firstLoadSignal.connect(self.playground.canvas.syncObjects)
 
         socketClient.weatherTimeSignal.connect(self.playground.rightPanel.timeWidget.setCurrentTimeData)
         socketClient.masterFirstLoadSignal.connect(self.playground.rightPanel.setMaster)
@@ -159,6 +169,17 @@ class ClientWindow(QMainWindow):
         disconnectMessageBox = QMessageBox()
         disconnectMessageBox.setText("Disconnected")
         disconnectMessageBox.show()
+
+    def loadSlot(self):
+        dlg = LoadDialog(self)
+        if dlg.exec():
+            self.playground.restoreGame(self.saveManager.load(dlg.saveNameTextBox.text()))
+
+    def saveSlot(self):
+        dlg = SaveDialog(self)
+        if dlg.exec():
+            self.saveManager.save(dlg.saveNameTextBox.text(), self.playground.storeGame())
+
 
     def keyPressEvent(self, ev: QKeyEvent) -> None:
         if ev.modifiers() & Qt.KeyboardModifier.ControlModifier:

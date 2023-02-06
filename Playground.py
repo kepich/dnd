@@ -38,3 +38,13 @@ class Playground(QWidget):
 
     def resizeEvent(self, a0: QResizeEvent) -> None:
         self.canvas.resizeEvent(a0)
+
+    def storeGame(self) -> dict:
+        return {
+            "canvas": self.canvas.storeGame(),
+            "weatherTime": self.rightPanel.timeWidget.getCurrentTimeData()
+        }
+
+    def restoreGame(self, data: dict):
+        self.canvas.restoreGame(data["canvas"])
+        self.rightPanel.timeWidget.setCurrentTimeData(data["weatherTime"])
