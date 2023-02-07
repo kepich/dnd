@@ -15,7 +15,7 @@ class RightPanel(QWidget):
 
         self.addElements()
         self.vertical_layout.addLayout(self.addWeatherAndTime())
-        self.vertical_layout.addStretch(1)
+        # self.vertical_layout.addStretch(1)
         self.diceWidget = DiceWidget(self)
         self.vertical_layout.addWidget(self.diceWidget)
         self.vertical_layout.addStretch(1)

@@ -3,6 +3,8 @@ import uuid
 from PyQt6.QtCore import Qt, QRect
 from PyQt6.QtGui import QPixmap
 
+from model.PixmapDto import PixmapDto
+
 
 class DrawableObject:
     MIN_OBJECT_SIZE = 10

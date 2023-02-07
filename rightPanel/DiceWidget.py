@@ -14,7 +14,7 @@ class DiceWidget(QWidget):
 
         self.diceListLabel = QLabel("")
         self.diceListLabel.setWordWrap(True)
-        self.diceListLabel.setFixedHeight(30)
+        self.diceListLabel.setFixedHeight(15)
         self.diceListLabel.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         self.verticalLayout.addWidget(self.diceListLabel)
 
@@ -39,14 +39,15 @@ class DiceWidget(QWidget):
         self.d12 = QPushButton("12")
         self.d12.pressed.connect(lambda: self.throwDice(12))
         self.diceResultLabel = QLabel("0")
+        self.diceResultLabel.setFixedWidth(30)
 
-        self.gridLayout.addWidget(self.d20, 0, 0, 1, 3)
-        self.gridLayout.addWidget(self.d12, 1, 0)
-        self.gridLayout.addWidget(self.diceResultLabel, 1, 1, alignment=Qt.AlignmentFlag.AlignCenter)
-        self.gridLayout.addWidget(self.d4, 1, 2)
-        self.gridLayout.addWidget(self.d10, 2, 0)
-        self.gridLayout.addWidget(self.d8, 2, 1)
-        self.gridLayout.addWidget(self.d6, 2, 2)
+        self.gridLayout.addWidget(self.d20, 0, 0)
+        self.gridLayout.addWidget(self.d12, 0, 1)
+        self.gridLayout.addWidget(self.d10, 0, 2)
+        self.gridLayout.addWidget(self.d8, 1, 0)
+        self.gridLayout.addWidget(self.d4, 1, 1)
+        self.gridLayout.addWidget(self.d6, 1, 2)
+        self.gridLayout.addWidget(self.diceResultLabel, 0, 3, 2, 1, alignment=Qt.AlignmentFlag.AlignCenter)
 
     def createNumberOfDiceList(self):
         res = QListWidget(self)
