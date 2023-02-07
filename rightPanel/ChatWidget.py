@@ -24,8 +24,10 @@ class ChatWidget(QWidget):
         self.setLayout(self.vLayout)
 
     def sendMessageToServer(self):
-        self.parent().parent().canvas.networkProxy.sendMessageToChat(self.textBox.text())
-        self.textBox.clear()
+        msg = self.textBox.text().strip()
+        if msg != "":
+            self.parent().parent().canvas.networkProxy.sendMessageToChat(msg)
+            self.textBox.clear()
 
     def addChatMessage(self, fromUser, msg):
         self.chat.addItem(f"{fromUser}> {msg}")

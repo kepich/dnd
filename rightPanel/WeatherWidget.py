@@ -1,5 +1,4 @@
 import random
-import time
 
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel
 
@@ -23,8 +22,6 @@ class WeatherWidget(QWidget):
         self.vLayout.addWidget(self.windLabel)
 
         self.setLayout(self.vLayout)
-        self.rndSeed = time.time()
-        self.rnd = random.Random(self.rndSeed)
 
     def getTempClouds(self):
         return f"Sky: {CloudTypeNameDict[self.clouds]}"

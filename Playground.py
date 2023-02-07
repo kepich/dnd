@@ -3,8 +3,8 @@ from PyQt6.QtGui import QResizeEvent
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QGridLayout
 
 from Canvas import Canvas
-from toolbar.ColorPalette import *
 from rightPanel.RightPanel import RightPanel
+from toolbar.ColorPalette import *
 
 
 class Playground(QWidget):
@@ -12,7 +12,6 @@ class Playground(QWidget):
         super().__init__(parent)
 
         self.canvas = Canvas(self)
-        self.createPaletteWidget()
         self.rightPanel = RightPanel(self)
 
         self.gridLayout = QGridLayout()
@@ -20,21 +19,19 @@ class Playground(QWidget):
         self.gridLayout.addWidget(self.rightPanel, 0, 1, Qt.AlignmentFlag.AlignRight)
 
         self.gridLayout.setRowStretch(1, 1)
-        self.gridLayout.addLayout(self.palette, 2, 0)
+        self.gridLayout.addLayout(self.createPaletteWidget(), 2, 0)
 
         self.gridLayout.setRowStretch(3, 1)
 
         self.setLayout(self.gridLayout)
 
     def createPaletteWidget(self):
-        self.palette = QHBoxLayout()
-        self.addPaletteButtons(self.palette)
-
-    def addPaletteButtons(self, layout):
+        palette = QHBoxLayout()
         for c in COLORS:
             b = QPaletteButton(c)
             b.pressed.connect(lambda c=c: self.canvas.setPenColor(c))
-            layout.addWidget(b)
+            palette.addWidget(b)
+        return palette
 
     def resizeEvent(self, a0: QResizeEvent) -> None:
         self.canvas.resizeEvent(a0)

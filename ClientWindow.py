@@ -3,14 +3,14 @@ from PyQt6.QtGui import QKeyEvent, QCursor, QResizeEvent
 from PyQt6.QtWidgets import QMainWindow, QWidgetAction, QToolBar, QMessageBox
 from transliterate import translit
 
-from toolbar.EditMode import EditMode
+from Playground import Playground
 from dialog.EnterDialog import EnterDialog
 from dialog.LoadDialog import LoadDialog
 from dialog.LoadSceneDialog import LoadSceneDialog
-from Playground import Playground
 from dialog.SaveDialog import SaveDialog
-from utils.SaveManager import SaveManager
 from networking.SocketClient import SocketClient
+from toolbar.EditMode import EditMode
+from utils.SaveManager import SaveManager
 
 
 class ClientWindow(QMainWindow):
