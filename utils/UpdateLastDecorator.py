@@ -1,6 +1,6 @@
 from PyQt6.QtGui import QPixmap
 
-from DrawableObject import DrawableObject
+from model.DrawableObject import DrawableObject
 
 
 def get_collide(self, e):

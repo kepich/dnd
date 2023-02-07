@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QDialog, QVBoxLayout, QListWidget, QHBoxLayout, QPushButton
 
-from SaveManager import SaveManager
+from utils.SaveManager import SaveManager
 
 
 class LoadSceneDialog(QDialog):

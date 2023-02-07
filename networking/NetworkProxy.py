@@ -1,8 +1,8 @@
 from PyQt6.QtWidgets import QMessageBox
 
-from Action import Action
-from Message import Message
-from SocketClient import SocketClient
+from networking.Action import Action
+from model.Message import Message
+from networking.SocketClient import SocketClient
 
 
 class NetworkProxy:

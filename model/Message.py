@@ -1,4 +1,4 @@
-from DrawableObject import DrawableObject
+from model.DrawableObject import DrawableObject
 
 
 class Message:

@@ -1,10 +1,10 @@
-from PyQt6.QtCore import Qt, QSignalBlocker
+from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QResizeEvent
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QGridLayout
 
 from Canvas import Canvas
-from ColorPalette import *
-from RightPanel import RightPanel
+from toolbar.ColorPalette import *
+from rightPanel.RightPanel import RightPanel
 
 
 class Playground(QWidget):

@@ -1,9 +1,9 @@
-from PyQt6.QtCore import QTimer, QRect, Qt, QPoint, QSignalBlocker
+from PyQt6.QtCore import QTimer, QRect, Qt, QPoint
 from PyQt6.QtGui import QPixmap, QPainter, QTransform
 from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QSlider, QGridLayout, QHBoxLayout, QPushButton
 
-from WeatherTimeUtils import TimeDuration, TimeDurationDict, TimeDurationInvertedDict, MAX_DARKNESS
-from WeatherWidget import WeatherWidget
+from utils.WeatherTimeUtils import TimeDuration, TimeDurationDict, TimeDurationInvertedDict, MAX_DARKNESS
+from rightPanel.WeatherWidget import WeatherWidget
 
 
 class TimeWidget(QWidget):

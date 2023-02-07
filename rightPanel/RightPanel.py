@@ -1,9 +1,9 @@
 from PyQt6.QtCore import QSignalBlocker
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QCheckBox, QHBoxLayout
 
-from ChatWidget import ChatWidget
-from DiceWidget import DiceWidget
-from TimeWidget import TimeWidget
+from rightPanel.ChatWidget import ChatWidget
+from rightPanel.DiceWidget import DiceWidget
+from rightPanel.TimeWidget import TimeWidget
 
 
 class RightPanel(QWidget):

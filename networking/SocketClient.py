@@ -4,7 +4,7 @@ import traceback
 import socketio
 from PyQt6.QtCore import QThread, pyqtSignal
 
-from Message import Message
+from model.Message import Message
 
 
 class SocketClient(QThread):

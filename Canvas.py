@@ -2,12 +2,12 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor, QPainter, QWheelEvent
 from PyQt6.QtWidgets import QLabel, QApplication, QSizePolicy
 
-from Action import Action
-from Camera import Camera
-from EditMode import EditMode
-from Message import Message
-from Proxy import Proxy
-from UpdateLastDecorator import *
+from networking.Action import Action
+from utils.Camera import Camera
+from toolbar.EditMode import EditMode
+from model.Message import Message
+from networking.Proxy import Proxy
+from utils.UpdateLastDecorator import *
 
 LINE_WIDTH = 4
 GRID_LINE_WIDTH = 1

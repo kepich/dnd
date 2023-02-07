@@ -1,6 +1,6 @@
-from LocalProxy import LocalProxy
-from NetworkProxy import NetworkProxy
-from SocketClient import SocketClient
+from networking.LocalProxy import LocalProxy
+from networking.NetworkProxy import NetworkProxy
+from networking.SocketClient import SocketClient
 
 
 class Proxy:

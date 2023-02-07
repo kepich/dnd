@@ -3,7 +3,7 @@ import time
 
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel
 
-from WeatherTimeUtils import extraWindDecreaseValues, noWindIncreaseValues, windChangeValues, \
+from utils.WeatherTimeUtils import extraWindDecreaseValues, noWindIncreaseValues, windChangeValues, \
     windDirectionChangingValues, noCloudsIncreaseValues, extraCloudsDecreaseValues, cloudsChangeValues, WindDirection, \
     CloudType, CloudTypeNameDict, WindDirectionDict, CloudTypeDict
 
