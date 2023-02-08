@@ -8,7 +8,7 @@ class ChatWidget(QWidget):
         self.vLayout = QVBoxLayout()
         self.chat = QListWidget()
         self.chat.setWordWrap(True)
-        self.chat.setFixedHeight(300)
+        self.chat.setFixedHeight(200)
         self.vLayout.addWidget(self.chat)
 
         self.nickname = None

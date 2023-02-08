@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import QWidget, QHBoxLayout
 from character.BasicStatsWidget import BasicStatsWidget
 from character.ButtonsWidget import ButtonsWidget
 from character.InfoWidget import InfoWidget
-from character.StablockWidget import StatblockWidget
+from character.StablockWidget import StatBlockWidget
 from dialog.LoadCharacterDialog import LoadCharacterDialog
 from dialog.SaveDialog import SaveDialog
 from utils.SaveManager import SaveManager
@@ -29,7 +29,7 @@ class CharacterWidget(QWidget):
         self.basicStatsWidget = BasicStatsWidget(self.buttons)
         self.hLayout.addWidget(self.basicStatsWidget, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
 
-        self.statblock = StatblockWidget()
+        self.statblock = StatBlockWidget()
         self.hLayout.addWidget(self.statblock, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
 
     def bindButtons(self):
