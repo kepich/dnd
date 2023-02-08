@@ -1,7 +1,8 @@
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QSignalBlocker
 from PyQt6.QtGui import QPainter, QPixmap
 from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QCheckBox, QGridLayout, QPushButton, QFileDialog
 
+from model.PixmapDto import PixmapDto
 from utils.SaveManager import SaveManager
 
 
@@ -72,3 +73,26 @@ class InfoWidget(QWidget):
 
             self.pixmap = pixmap
             self.avatar.setPixmap(pixmap)
+
+    def getData(self):
+        return {
+            "pixmap": PixmapDto(self.pixmap),
+            "name": self.name.text(),
+            "lvl": self.lvl.text(),
+            "race": self.race.text(),
+            "profession": self.profession.text(),
+            "armorClass": self.armorClass.text(),
+            "inspiration": self.inspiration.isChecked(),
+            "prehistory": self.prehistory.text()
+        }
+
+    def setData(self, data: dict):
+        self.pixmap = data["pixmap"].pixmap
+        self.name.setText(data["name"])
+        self.lvl.setText(data["lvl"])
+        self.race.setText(data["race"])
+        self.profession.setText(data["profession"])
+        self.armorClass.setText(data["armorClass"])
+        with QSignalBlocker(self.inspiration) as blocker:
+            self.inspiration.setChecked(data["inspiration"])
+        self.prehistory.setText(data["prehistory"])

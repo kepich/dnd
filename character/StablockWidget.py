@@ -23,3 +23,21 @@ class StatblockWidget(QWidget):
         self.intelligenceWidget = StateWidget("INT", self.grid, 4)
         self.wisdomWidget = StateWidget("WSD", self.grid, 5)
         self.charismaWidget = StateWidget("CHR", self.grid, 6)
+
+    def getData(self):
+        return {
+            "strength": self.strengthWidget.getData(),
+            "dexterity": self.dexterityWidget.getData(),
+            "constitution": self.constitutionWidget.getData(),
+            "intelligence": self.intelligenceWidget.getData(),
+            "wisdom": self.wisdomWidget.getData(),
+            "charisma": self.charismaWidget.getData()
+        }
+
+    def setData(self, data: dict):
+        self.strengthWidget.setData(data["strength"])
+        self.dexterityWidget.setData(data["dexterity"])
+        self.constitutionWidget.setData(data["constitution"])
+        self.intelligenceWidget.setData(data["intelligence"])
+        self.wisdomWidget.setData(data["wisdom"])
+        self.charismaWidget.setData(data["charisma"])

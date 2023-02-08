@@ -1,5 +1,5 @@
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QCheckBox, QGridLayout
+from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QGridLayout
 
 from character.ButtonsWidget import ButtonsWidget
 
@@ -44,3 +44,21 @@ class BasicStatsWidget(QWidget):
         self.grid.addWidget(QLabel("Speed:"), 2, 2, alignment=Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
         self.grid.addWidget(self.speed, 2, 3, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         self.grid.addWidget(buttons, 3, 0, 1, 4, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+
+    def getData(self):
+        return {
+            "armorClass": self.armorClass.text(),
+            "initiative": self.initiative.text(),
+            "speed": self.speed.text(),
+            "hp": self.hp.text(),
+            "hpDice": self.hpDice.text(),
+            "profBonus": self.profBonus.text()
+        }
+
+    def setData(self, data: dict):
+        self.armorClass.setText(data["armorClass"])
+        self.initiative.setText(data["initiative"])
+        self.speed.setText(data["speed"])
+        self.hp.setText(data["hp"])
+        self.hpDice.setText(data["hpDice"])
+        self.profBonus.setText(data["profBonus"])

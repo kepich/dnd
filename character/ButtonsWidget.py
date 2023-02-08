@@ -8,7 +8,6 @@ class ButtonsWidget(QWidget):
         super().__init__(parent)
 
         self.grid = QGridLayout()
-        # self.grid.setVerticalSpacing(0)
         self.grid.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.grid)
 
@@ -29,10 +28,7 @@ class ButtonsWidget(QWidget):
         self.notebookButton.clicked.connect(self.notebook.show)
 
         self.saveCharButton = QPushButton("Save char")
-        self.saveCharButton.clicked.connect(self.notebook.show)
-
         self.loadCharButton = QPushButton("Load char")
-        self.loadCharButton.clicked.connect(self.notebook.show)
 
         self.grid.addWidget(self.inventoryButton, 0, 0)
         self.grid.addWidget(self.magicButton, 0, 1)
