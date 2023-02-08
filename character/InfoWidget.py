@@ -1,8 +1,9 @@
 from PyQt6.QtCore import Qt, QSignalBlocker
 from PyQt6.QtGui import QPainter, QPixmap
-from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QCheckBox, QGridLayout, QPushButton, QFileDialog
+from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QCheckBox, QGridLayout, QPushButton, QFileDialog, QApplication
 
 from model.PixmapDto import PixmapDto
+from utils.QClickableLabel import QClickableLabel
 from utils.SaveManager import SaveManager
 
 
@@ -16,9 +17,10 @@ class InfoWidget(QWidget):
         self.setLayout(self.grid)
 
         self.pixmap = None
-        self.avatar = QLabel("Avatar")
+        self.avatar = QClickableLabel("Avatar")
         self.avatar.setFixedHeight(100)
         self.avatar.setFixedWidth(100)
+        self.avatar.click.connect(self.copyAvatar)
 
         self.name = QLineEdit()
         self.name.setFixedWidth(100)
@@ -73,6 +75,10 @@ class InfoWidget(QWidget):
 
             self.pixmap = pixmap
             self.avatar.setPixmap(pixmap)
+
+    def copyAvatar(self):
+        if self.pixmap is not None:
+            QApplication.clipboard().setPixmap(self.pixmap)
 
     def getData(self):
         return {
