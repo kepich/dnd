@@ -1,6 +1,8 @@
 import pickle
 from os import listdir
 
+from PyQt6.QtGui import QPixmap
+
 
 class SaveManager:
     saves_path = "saves/"
@@ -33,3 +35,6 @@ class SaveManager:
 
     def getScenes(self):
         return [f for f in listdir(self.scenes_path)]
+
+    def loadPixmapFromFile(self, filename: str) -> QPixmap:
+        return QPixmap(filename)
