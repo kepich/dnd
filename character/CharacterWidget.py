@@ -50,6 +50,7 @@ class CharacterWidget(QWidget):
     def getData(self):
         return {
             "info": self.infoWidget.getData(),
+            "inventory": self.buttons.getData(),
             "basicStats": self.basicStatsWidget.getData(),
             "statblock": self.statblock.getData()
         }
@@ -57,4 +58,5 @@ class CharacterWidget(QWidget):
     def setData(self, data: dict):
         self.infoWidget.setData(data["info"])
         self.basicStatsWidget.setData(data["basicStats"])
+        self.buttons.setData(data["inventory"])
         self.statblock.setData(data["statblock"])

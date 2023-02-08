@@ -9,7 +9,8 @@ class PixmapDto:
     def __getstate__(self):
         qbyte_array = QByteArray()
         stream = QDataStream(qbyte_array, QIODevice.OpenModeFlag.WriteOnly)
-        stream << self.pixmap
+        if self.pixmap is not None:
+            stream << self.pixmap
         return qbyte_array
 
     def __setstate__(self, buffer):

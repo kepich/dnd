@@ -88,6 +88,7 @@ class InfoWidget(QWidget):
 
     def setData(self, data: dict):
         self.pixmap = data["pixmap"].pixmap
+        self.avatar.setPixmap(self.pixmap)
         self.name.setText(data["name"])
         self.lvl.setText(data["lvl"])
         self.race.setText(data["race"])

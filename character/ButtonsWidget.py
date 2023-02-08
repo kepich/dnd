@@ -36,3 +36,17 @@ class ButtonsWidget(QWidget):
         self.grid.addWidget(self.notebookButton, 1, 1)
         self.grid.addWidget(self.saveCharButton, 2, 0)
         self.grid.addWidget(self.loadCharButton, 2, 1)
+
+    def getData(self):
+        return {
+            "inventory": self.inventory.getData(),
+            "magic": self.magic.getData(),
+            "skills": self.skills.getData(),
+            "notebook": self.notebook.getData()
+        }
+
+    def setData(self, data: dict):
+        self.inventory.setData(data["inventory"])
+        self.magic.setData(data["magic"])
+        self.skills.setData(data["skills"])
+        self.notebook.setData(data["notebook"])
