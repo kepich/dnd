@@ -36,7 +36,7 @@ class Playground(QWidget):
         for c in COLORS:
             b = QPaletteButton(c)
             b.pressed.connect(lambda c=c: self.canvas.setPenColor(c))
-            palette.addWidget(b, i % 2, i // 2)
+            palette.addWidget(b, i % 8, i // 8)
             i += 1
         return palette
 

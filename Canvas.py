@@ -221,7 +221,7 @@ class Canvas(QLabel):
         self.setPixmap(pixmap)
 
     def resizeEvent(self, a0) -> None:
-        self.camera.MAX_HEIGHT = self.parent().height() - 100
+        self.camera.MAX_HEIGHT = self.parent().height() - 200
         self.camera.MAX_WIDTH = self.parent().width() - self.parent().rightPanel.width() - 50
         self.redraw()
 
