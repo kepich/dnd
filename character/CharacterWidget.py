@@ -29,6 +29,7 @@ class CharacterWidget(QWidget):
         self.bindButtons()
 
         self.basicStatsWidget = BasicStatsWidget(self.buttons)
+        self.basicStatsWidget.hp.textChanged.connect(lambda _: self.infoWidget.updateCharacterSlot())
         self.hLayout.addWidget(self.basicStatsWidget, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
 
         self.statblock = StatBlockWidget()

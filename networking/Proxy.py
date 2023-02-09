@@ -1,3 +1,4 @@
+from model.Metadata import Metadata
 from networking.LocalProxy import LocalProxy
 from networking.NetworkProxy import NetworkProxy
 from networking.SocketClient import SocketClient
@@ -22,6 +23,9 @@ class Proxy:
 
     def clear(self, collection):
         self.tempProxy.clear(collection)
+
+    def updateMeta(self, meta: Metadata):
+        self.tempProxy.updateMeta(meta)
 
     def sendMessageToChat(self, msg):
         self.tempProxy.sendMessageToChat(msg)

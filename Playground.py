@@ -25,6 +25,7 @@ class Playground(QWidget):
         self.hLayout.addLayout(self.createPaletteWidget())
         self.charWidget = CharacterWidget(self)
         self.charWidget.infoWidget.pasteCharacter.connect(self.canvas.createEntityWithMetadata)
+        self.charWidget.infoWidget.updateCharacter.connect(self.canvas.updateMeta)
         self.hLayout.addWidget(self.charWidget)
 
         self.gridLayout.setRowStretch(3, 1)

@@ -34,3 +34,6 @@ class LocalProxy:
 
     def sendLoad(self, data):
         pass
+
+    def updateMeta(self, meta):
+        pass

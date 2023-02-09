@@ -5,6 +5,7 @@ import socketio
 from PyQt6.QtCore import QThread, pyqtSignal
 
 from model.Message import Message
+from model.Metadata import Metadata
 
 
 class SocketClient(QThread):
@@ -74,3 +75,6 @@ class SocketClient(QThread):
 
     def sendLoad(self, data: dict):
         return self.sio.emit("load", pickle.dumps(data))
+
+    def updateMeta(self, meta: Metadata):
+        pass

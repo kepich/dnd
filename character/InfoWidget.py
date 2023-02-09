@@ -1,6 +1,6 @@
 from PyQt6.QtCore import Qt, QSignalBlocker, pyqtSignal
 from PyQt6.QtGui import QPainter, QPixmap, QIntValidator
-from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QCheckBox, QGridLayout, QPushButton, QFileDialog, QApplication
+from PyQt6.QtWidgets import QWidget, QLineEdit, QCheckBox, QGridLayout, QPushButton, QFileDialog
 
 from model.Metadata import Metadata
 from model.PixmapDto import PixmapDto
@@ -10,6 +10,7 @@ from utils.SaveManager import SaveManager
 
 class InfoWidget(QWidget):
     pasteCharacter = pyqtSignal(QPixmap, Metadata)
+    updateCharacter = pyqtSignal(Metadata)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -58,7 +59,8 @@ class InfoWidget(QWidget):
         self.grid.addWidget(self.name, 0, 0, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         self.grid.addWidget(self.lvl, 0, 1, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         self.grid.addWidget(self.avatar, 1, 0, 4, 1, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
-        self.grid.addWidget(self.loadAvatarButton, 5, 0, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+        self.grid.addWidget(self.loadAvatarButton, 5, 0,
+                            alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         self.grid.addWidget(self.race, 1, 1, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         self.grid.addWidget(self.profession, 2, 1, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         self.grid.addWidget(self.prehistory, 3, 1, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
@@ -81,11 +83,19 @@ class InfoWidget(QWidget):
             self.avatar.setPixmap(pixmap)
 
     def copyAvatar(self):
-        if self.pixmap is not None and \
-                self.parent().basicStatsWidget.hp.text().isnumeric() and\
-                self.name.text() != "":
-            self.pasteCharacter.emit(self.pixmap, Metadata(True, int(self.parent().basicStatsWidget.hp.text()), self.name.text()))
-            # QApplication.clipboard().setPixmap(self.pixmap)
+        meta = self.getMetadata()
+        if meta is not None:
+            self.pasteCharacter.emit(self.pixmap, meta)
+
+    def updateCharacterSlot(self):
+        meta = self.getMetadata()
+        if meta is not None:
+            self.updateCharacter.emit(meta)
+
+    def getMetadata(self):
+        if self.pixmap is not None and self.parent().basicStatsWidget.hp.text().isnumeric() and self.name.text() != "":
+            return Metadata(True, int(self.parent().basicStatsWidget.hp.text()), self.name.text())
+        return None
 
     def getData(self):
         return {

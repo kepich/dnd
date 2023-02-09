@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QMessageBox
 
 from model.Message import Message
+from model.Metadata import Metadata
 from networking.Action import Action
 from networking.SocketClient import SocketClient
 
@@ -27,6 +28,9 @@ class NetworkProxy:
     def remove(self, collection, obj):
         collection.remove(obj)
         self.sendQueue.append(Message(Action.REMOVE, uuid=str(obj.uuid)))
+
+    def updateMeta(self, meta: Metadata):
+        self.sendQueue.append(Message(Action.UPDATE_META, meta=meta))
 
     def clear(self, collection):
         collection.clear()

@@ -7,3 +7,4 @@ class Action(Enum):
     CREATE = 3
     REMOVE = 4
     CLEAR = 5
+    UPDATE_META = 6

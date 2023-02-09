@@ -18,7 +18,7 @@ class Metadata:
 
     def deserialize(data: dict):
         res = Metadata()
-        res.field = data.get("isEntity")
+        res.isEntity = data.get("isEntity")
         res.hp = data.get("hp")
         res.name = data.get("name")
 

@@ -260,8 +260,18 @@ class Canvas(QLabel):
         self.isCave = status
         self.redraw()
 
+    def updateMeta(self, meta: Metadata):
+        duplicates = self.findObjectByMetaName(meta)
+        for obj in duplicates:
+            obj.metadata.hp = meta.hp
+        self.networkProxy.updateMeta(meta)
+        self.redraw()
+
     def findObjectByUUID(self, uuid):
         return next(filter(lambda obj: str(obj.uuid) == uuid, self.objects), None)
+
+    def findObjectByMetaName(self, meta):
+        return list(filter(lambda obj: obj.metadata.name == meta.name, self.objects))
 
     def updateFromNetwork(self, msg: Message):
         if msg.action is Action.CREATE:
@@ -275,6 +285,10 @@ class Canvas(QLabel):
         elif msg.action is Action.REMOVE:
             obj: DrawableObject = self.findObjectByUUID(msg.uuid)
             self.objects.remove(obj)
+        elif msg.action is Action.UPDATE_META:
+            duplicates = self.findObjectByMetaName(msg.meta)
+            for obj in duplicates:
+                obj.metadata.hp = msg.meta.hp
         elif msg.action is Action.CLEAR:
             self.objects.clear()
 
