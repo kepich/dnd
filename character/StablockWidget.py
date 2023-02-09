@@ -24,6 +24,14 @@ class StatBlockWidget(QWidget):
         self.wisdomWidget = StateWidget("WSD", self.grid, 5)
         self.charismaWidget = StateWidget("CHR", self.grid, 6)
 
+    def updateProficiencyBonus(self, profBonus: int):
+        self.strengthWidget.updateProficiencyBonus(profBonus)
+        self.dexterityWidget.updateProficiencyBonus(profBonus)
+        self.constitutionWidget.updateProficiencyBonus(profBonus)
+        self.intelligenceWidget.updateProficiencyBonus(profBonus)
+        self.wisdomWidget.updateProficiencyBonus(profBonus)
+        self.charismaWidget.updateProficiencyBonus(profBonus)
+
     def getData(self):
         return {
             "strength": self.strengthWidget.getData(),

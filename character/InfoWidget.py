@@ -1,5 +1,5 @@
 from PyQt6.QtCore import Qt, QSignalBlocker
-from PyQt6.QtGui import QPainter, QPixmap
+from PyQt6.QtGui import QPainter, QPixmap, QIntValidator
 from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QCheckBox, QGridLayout, QPushButton, QFileDialog, QApplication
 
 from model.PixmapDto import PixmapDto
@@ -28,6 +28,7 @@ class InfoWidget(QWidget):
 
         self.lvl = QLineEdit()
         self.lvl.setFixedWidth(45)
+        self.lvl.setValidator(QIntValidator(0, 90, self))
         self.lvl.setPlaceholderText("lvl")
 
         self.race = QLineEdit()

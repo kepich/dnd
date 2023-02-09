@@ -1,4 +1,5 @@
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QIntValidator
 from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QGridLayout
 
 from character.ButtonsWidget import ButtonsWidget
@@ -14,22 +15,25 @@ class BasicStatsWidget(QWidget):
         self.setLayout(self.grid)
 
         self.armorClass = QLineEdit()
+        self.armorClass.setValidator(QIntValidator(0, 50, self))
         self.armorClass.setFixedWidth(45)
 
         self.initiative = QLineEdit()
+        self.initiative.setValidator(QIntValidator(-30, 30, self))
         self.initiative.setFixedWidth(45)
 
         self.speed = QLineEdit()
+        self.speed.setValidator(QIntValidator(0, 300, self))
         self.speed.setFixedWidth(45)
 
         self.hp = QLineEdit()
+        self.hp.setValidator(QIntValidator(0, 1000, self))
         self.hp.setFixedWidth(45)
 
         self.hpDice = QLineEdit()
         self.hpDice.setFixedWidth(45)
 
-        self.profBonus = QLineEdit()
-        self.profBonus.setFixedWidth(45)
+        self.profBonus = QLabel()
 
         self.grid.addWidget(QLabel("PB:"), 0, 0, alignment=Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
         self.grid.addWidget(self.profBonus, 0, 1, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
@@ -44,6 +48,9 @@ class BasicStatsWidget(QWidget):
         self.grid.addWidget(QLabel("Speed:"), 2, 2, alignment=Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
         self.grid.addWidget(self.speed, 2, 3, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         self.grid.addWidget(buttons, 3, 0, 1, 4, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+
+    def updateProficiencyBonus(self, profBonus: int):
+        self.profBonus.setText(str(profBonus))
 
     def getData(self):
         return {

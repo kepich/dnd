@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton
 
 from character.NotebookWidget import NotebookWidget
+from character.SkillsWidget import SkillsWidget
 
 
 class ButtonsWidget(QWidget):
@@ -20,7 +21,7 @@ class ButtonsWidget(QWidget):
         self.magicButton.clicked.connect(self.magic.show)
 
         self.skillsButton = QPushButton("Skills")
-        self.skills = NotebookWidget(name="Skills")
+        self.skills = SkillsWidget(name="Skills")
         self.skillsButton.clicked.connect(self.skills.show)
 
         self.notebookButton = QPushButton("Notebook")
@@ -36,6 +37,10 @@ class ButtonsWidget(QWidget):
         self.grid.addWidget(self.notebookButton, 1, 1)
         self.grid.addWidget(self.saveCharButton, 2, 0)
         self.grid.addWidget(self.loadCharButton, 2, 1)
+
+    def updateProficiencyBonus(self, newBonus: int):
+        self.skills.updateProficiencyBonus(newBonus)
+        pass
 
     def getData(self):
         return {
