@@ -1,19 +1,22 @@
 import uuid
 
 from PyQt6.QtCore import Qt, QRect
-from PyQt6.QtGui import QPixmap
 
+from model.Metadata import Metadata
 from model.PixmapDto import PixmapDto
 
 
 class DrawableObject:
     MIN_OBJECT_SIZE = 10
 
-    def __init__(self, x_min, x_max, y_min, y_max, pixmap):
+    def __init__(self, x_min, x_max, y_min, y_max, pixmap=None):
         self.q_rect = QRect(x_min, y_min, x_max - x_min, y_max - y_min)
         self.uuid = uuid.uuid1()
-        self.pixmap = pixmap
-        self.pixmap.fill(Qt.GlobalColor.transparent)
+        self.pixmap = None
+        if pixmap is not None:
+            self.pixmap = pixmap
+            self.pixmap.fill(Qt.GlobalColor.transparent)
+        self.metadata = Metadata()
 
     def from_pixmap_and_offset(self, pixmap, x_offset, y_offset):
         self.q_rect = QRect(pixmap.rect())
@@ -45,18 +48,34 @@ class DrawableObject:
 
     def is_collide(self, x, y):
         return self.q_rect.x() < x < self.q_rect.x() + self.q_rect.width() and \
-               self.q_rect.y() < y < self.q_rect.y() + self.q_rect.height()
+            self.q_rect.y() < y < self.q_rect.y() + self.q_rect.height()
 
     def serialize(self):
-        return {
+        res = {
             "q_rect": self.q_rect,
             "uuid": self.uuid,
             "pixmapDto": PixmapDto(self.pixmap)
         }
 
+        if self.metadata is not None:
+            res["meta"] = self.metadata.serialize()
+
+        return res
+
     def deserialize(dictionary: dict):
-        res = DrawableObject(0, 0, 0, 0, QPixmap(1, 1))
+        res = DrawableObject(0, 0, 0, 0)
         res.q_rect = dictionary["q_rect"]
         res.pixmap = dictionary["pixmapDto"].pixmap
         res.uuid = dictionary["uuid"]
+        if "meta" in dictionary.keys():
+            res.metadata = Metadata.deserialize(dictionary["meta"])
         return res
+
+    def isEntity(self):
+        return self.metadata.isEntityCheck()
+
+    def getEntityHeader(self):
+        if self.metadata.isEntityCheck():
+            return f"{self.metadata.name} {self.metadata.hp} HP"
+        else:
+            return ""

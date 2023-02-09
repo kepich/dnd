@@ -20,7 +20,7 @@ class CharacterWidget(QWidget):
         self.hLayout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.hLayout)
 
-        self.infoWidget = InfoWidget()
+        self.infoWidget = InfoWidget(self)
         self.infoWidget.lvl.textChanged.connect(self.lvlChangedAction)
 
         self.hLayout.addWidget(self.infoWidget, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
@@ -33,7 +33,7 @@ class CharacterWidget(QWidget):
 
         self.statblock = StatBlockWidget()
 
-        self.statblock.strengthWidget.modifier.textChanged.connect(self.buttons.skills.updateStrngthValue)
+        self.statblock.strengthWidget.modifier.textChanged.connect(self.buttons.skills.updateStrengthValue)
         self.statblock.dexterityWidget.modifier.textChanged.connect(self.buttons.skills.updateDexterityValue)
         self.statblock.intelligenceWidget.modifier.textChanged.connect(self.buttons.skills.updateIntelligenceValue)
         self.statblock.wisdomWidget.modifier.textChanged.connect(self.buttons.skills.updateWisdomValue)

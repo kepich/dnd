@@ -1,8 +1,9 @@
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QPoint
 from PyQt6.QtGui import QColor, QPainter, QWheelEvent
 from PyQt6.QtWidgets import QLabel, QApplication, QSizePolicy
 
 from model.Message import Message
+from model.Metadata import Metadata
 from networking.Action import Action
 from networking.Proxy import Proxy
 from toolbar.EditMode import EditMode
@@ -25,7 +26,7 @@ class Canvas(QLabel):
         self.last_x, self.last_y = None, None
         self.dx_cumulative, self.dy_cumulative = None, None
         self.pen_color = QColor('#000000')
-        self.objects = []
+        self.objects: list[DrawableObject] = []
         self.last_draw = None
 
         self.isDarknessVisible = True
@@ -145,6 +146,19 @@ class Canvas(QLabel):
 
         self.redraw()
 
+    def createEntityWithMetadata(self, pixmap: QPixmap, metadata: Metadata):
+        if metadata.name is not None:
+            duplicate = next(filter(lambda obj: obj.metadata.name == metadata.name, self.objects), None)
+
+            if duplicate is not None:
+                self.networkProxy.remove(self.objects, duplicate)
+
+        newEntity = DrawableObject(0, 0, 0, 0)
+        newEntity.from_pixmap_and_offset(pixmap, self.camera.x_abs(0), self.camera.y_abs(0))
+        newEntity.metadata = metadata
+        self.networkProxy.create(self.objects, newEntity)
+        self.redraw()
+
     def paste(self, x_pos=0, y_pos=0):
         clipboard = QApplication.clipboard()
         mimeData = clipboard.mimeData()
@@ -154,12 +168,11 @@ class Canvas(QLabel):
             self.last_draw = DrawableObject(self.camera.abs(x_pos),
                                             self.camera.abs(x_pos) + pixmap.width(),
                                             self.camera.abs(y_pos),
-                                            self.camera.abs(y_pos) + pixmap.height(),
-                                            QPixmap(1, 1))
+                                            self.camera.abs(y_pos) + pixmap.height())
 
             self.last_draw.from_pixmap_and_offset(pixmap,
-                                                  self.camera.x_abs(x_pos),
-                                                  self.camera.y_abs(y_pos))
+                                                  self.camera.x_abs(x_pos - 85),
+                                                  self.camera.y_abs(y_pos - 10))
 
             self.networkProxy.create(self.objects, self.last_draw)
             self.redraw()
@@ -197,8 +210,18 @@ class Canvas(QLabel):
         painter = QPainter(pixmap)
         painter.begin(pixmap)
 
+        entities = []
         for pm in self.objects:
-            painter.drawPixmap(self.camera.project(pm), pm.pixmap)
+            if pm.isEntity():
+                entities.append(pm)
+            else:
+                painter.drawPixmap(self.camera.project(pm), pm.pixmap)
+
+        for pm in entities:
+            rect = self.camera.project(pm)
+            painter.drawPixmap(rect, pm.pixmap)
+            painter.drawText(QPoint(rect.x(), rect.y() - 10), pm.getEntityHeader())
+
         painter.end()
 
         if self.isGridVisible:

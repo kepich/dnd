@@ -1,5 +1,7 @@
 from PyQt6.QtCore import QRect
 
+from model.DrawableObject import DrawableObject
+
 
 class Camera:
     x_offset = 0
@@ -62,5 +64,14 @@ class Camera:
     def abs_max_height(self):
         return self.abs(self.MAX_HEIGHT)
 
-    def getCollide(self, x, y, objects):
-        return next(filter(lambda obj: obj.is_collide(self.x_abs(x), self.y_abs(y)), reversed(objects)), None)
+    def getCollide(self, x, y, objects: list[DrawableObject]):
+        entities = []
+        environment = []
+        for obj in reversed(objects):
+            if obj.isEntity():
+                entities.append(obj)
+            else:
+                environment.append(obj)
+
+        return next(filter(lambda obj: obj.is_collide(self.x_abs(x), self.y_abs(y)), entities),
+                    next(filter(lambda obj: obj.is_collide(self.x_abs(x), self.y_abs(y)), environment), None))

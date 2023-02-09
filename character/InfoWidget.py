@@ -1,13 +1,16 @@
-from PyQt6.QtCore import Qt, QSignalBlocker
+from PyQt6.QtCore import Qt, QSignalBlocker, pyqtSignal
 from PyQt6.QtGui import QPainter, QPixmap, QIntValidator
 from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QCheckBox, QGridLayout, QPushButton, QFileDialog, QApplication
 
+from model.Metadata import Metadata
 from model.PixmapDto import PixmapDto
 from utils.QClickableLabel import QClickableLabel
 from utils.SaveManager import SaveManager
 
 
 class InfoWidget(QWidget):
+    pasteCharacter = pyqtSignal(QPixmap, Metadata)
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.grid = QGridLayout()
@@ -78,8 +81,11 @@ class InfoWidget(QWidget):
             self.avatar.setPixmap(pixmap)
 
     def copyAvatar(self):
-        if self.pixmap is not None:
-            QApplication.clipboard().setPixmap(self.pixmap)
+        if self.pixmap is not None and \
+                self.parent().basicStatsWidget.hp.text().isnumeric() and\
+                self.name.text() != "":
+            self.pasteCharacter.emit(self.pixmap, Metadata(True, int(self.parent().basicStatsWidget.hp.text()), self.name.text()))
+            # QApplication.clipboard().setPixmap(self.pixmap)
 
     def getData(self):
         return {

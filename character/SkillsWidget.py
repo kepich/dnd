@@ -34,7 +34,6 @@ class SkillsWidget(QWidget):
 
         self.textEdit = QTextEdit()
         self.textEdit.setFixedWidth(600)
-        self.textEdit.setFixedHeight(400)
         hLayout.addWidget(self.textEdit)
 
         layout.addLayout(hLayout)
@@ -61,7 +60,7 @@ class SkillsWidget(QWidget):
         for sb in self.skillBlock:
             sb.updateProficiencyBonus(newBonus)
 
-    def updateStrngthValue(self, newValue: str):
+    def updateStrengthValue(self, newValue: str):
         next(filter(lambda sb: sb.name == "STR", self.skillBlock)).updateValue(int(newValue))
 
     def updateDexterityValue(self, newValue: str):
