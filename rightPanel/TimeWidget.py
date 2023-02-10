@@ -41,7 +41,7 @@ class TimeWidget(QWidget):
         self.time = 0
         self.days = 0
         self.timeSpeed = TimeDuration.S_2_S
-        self.drawAllTime(self.time)
+        self.drawAllTime()
 
     def setTimeSpeed(self):
         self.timeSpeed = TimeDurationDict[self.timeDurationSlider.value()]
@@ -53,12 +53,11 @@ class TimeWidget(QWidget):
         self.timer.stop()
 
     def showTime(self):
-        dt = self.time
         self.updateTime(self.timeSpeed.value)
-        self.drawAllTime(dt)
+        self.drawAllTime()
         self.parent().parent().canvas.networkProxy.weatherSend(self.getCurrentTimeData())
 
-    def drawAllTime(self, oldTime):
+    def drawAllTime(self):
         h = int(self.time / TimeDuration.S_2_H.value)
         m = int((self.time % TimeDuration.S_2_H.value) / TimeDuration.S_2_M.value)
         s = int(self.time % TimeDuration.S_2_M.value)
@@ -67,21 +66,19 @@ class TimeWidget(QWidget):
                      f"{f'0{s}' if s < 10 else f'{s}'}"
 
         self.drawClock(timeString, f"Day {self.days}")
-        self.nightRedraw(h, oldTime)
+        self.nightRedraw(h)
 
-    def nightRedraw(self, h, oldTime):
-        oh = int(oldTime / TimeDuration.S_2_H.value)
-        if h != oh:
-            if 22 >= h >= 18:
-                self.parent().parent().canvas.darknessValue = MAX_DARKNESS / 4 * (h - 18)
-                self.parent().parent().canvas.redraw()
-            elif 6 <= h <= 10:
-                self.parent().parent().canvas.darknessValue = MAX_DARKNESS / 4 * (10 - h)
-                self.parent().parent().canvas.redraw()
-            elif 18 > h > 10:
-                self.parent().parent().canvas.darknessValue = 0
-            else:
-                self.parent().parent().canvas.darknessValue = MAX_DARKNESS
+    def nightRedraw(self, h):
+        if 22 >= h >= 18:
+            nightLevel = MAX_DARKNESS / 4 * (h - 18)
+        elif 6 <= h <= 10:
+            nightLevel = MAX_DARKNESS / 4 * (10 - h)
+        elif 18 > h > 10:
+            nightLevel = 0
+        else:
+            nightLevel = MAX_DARKNESS
+
+        self.parent().parent().canvas.setDarknessValue(nightLevel)
 
     def updateTime(self, value):
         self.days = self.days + int((self.time + value) / TimeDuration.S_2_D.value)
@@ -151,11 +148,10 @@ class TimeWidget(QWidget):
         }
 
     def setCurrentTimeData(self, data: dict):
-        dt = self.time
         self.time = data["time"]
         self.days = data["days"]
         self.timeSpeed = data["timeSpeed"]
         self.timeDurationSlider.setValue(TimeDurationInvertedDict[self.timeSpeed])
         self.weatherWidget.setTempWeather(data["weather"])
         self.weatherWidget.drawWeather()
-        self.drawAllTime(dt)
+        self.drawAllTime()

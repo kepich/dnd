@@ -251,6 +251,11 @@ class Canvas(QLabel):
         self.isGridVisible = status
         self.redraw()
 
+    def setDarknessValue(self, value):
+        if self.darknessValue != value:
+            self.darknessValue = value
+            self.redraw()
+
     def setDarknessVisibility(self, status):
         self.isDarknessVisible = status
         self.redraw()
