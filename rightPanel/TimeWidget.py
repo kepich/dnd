@@ -1,6 +1,6 @@
 from PyQt6.QtCore import QTimer, QRect, Qt, QPoint
 from PyQt6.QtGui import QPixmap, QPainter, QTransform
-from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QSlider, QGridLayout, QHBoxLayout, QPushButton
+from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QSlider, QGridLayout, QHBoxLayout
 
 from rightPanel.WeatherWidget import WeatherWidget
 from utils.WeatherTimeUtils import TimeDuration, TimeDurationDict, TimeDurationInvertedDict, MAX_DARKNESS
@@ -27,15 +27,6 @@ class TimeWidget(QWidget):
 
         self.hLayout = QHBoxLayout()
 
-        vLayout = QVBoxLayout()
-        self.hLayout.addLayout(vLayout)
-        self.morningButton = QPushButton("Morning")
-        self.morningButton.pressed.connect(lambda: self.setTime(25200))
-        self.midnightButton = QPushButton("Midnight")
-        self.midnightButton.pressed.connect(lambda: self.setTime(TimeDuration.S_2_D.value))
-        vLayout.addWidget(self.morningButton)
-        vLayout.addWidget(self.midnightButton)
-
         self.sliderLayout = self.addSlider()
         self.timeDurationSlider.sliderReleased.connect(self.setTimeSpeed)
 
@@ -51,9 +42,6 @@ class TimeWidget(QWidget):
         self.days = 0
         self.timeSpeed = TimeDuration.S_2_S
         self.drawAllTime(self.time)
-
-    def setTime(self, time: int):
-        self.time = time
 
     def setTimeSpeed(self):
         self.timeSpeed = TimeDurationDict[self.timeDurationSlider.value()]
@@ -138,20 +126,19 @@ class TimeWidget(QWidget):
         l7 = QLabel("W")
 
         self.timeDurationSlider = QSlider(Qt.Orientation.Horizontal)
-        self.timeDurationSlider.setFixedWidth(200)
         self.timeDurationSlider.setRange(0, 7)
+        self.timeDurationSlider.setTickPosition(QSlider.TickPosition.TicksAbove)
 
         layout = QGridLayout()
-        layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.timeDurationSlider, 0, 0, 1, 8)
-        layout.addWidget(l0, 1, 0, 1, 1)
-        layout.addWidget(l1, 1, 1, 1, 1)
-        layout.addWidget(l2, 1, 2, 1, 1)
-        layout.addWidget(l3, 1, 3, 1, 1)
-        layout.addWidget(l4, 1, 4, 1, 1)
-        layout.addWidget(l5, 1, 5, 1, 1)
-        layout.addWidget(l6, 1, 6, 1, 1)
-        layout.addWidget(l7, 1, 7, 1, 1)
+        layout.addWidget(l0, 1, 0, alignment=Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(l1, 1, 1, alignment=Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(l2, 1, 2, alignment=Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(l3, 1, 3, alignment=Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(l4, 1, 4, alignment=Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(l5, 1, 5, alignment=Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(l6, 1, 6, alignment=Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(l7, 1, 7, alignment=Qt.AlignmentFlag.AlignCenter)
 
         return layout
 

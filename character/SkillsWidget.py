@@ -1,5 +1,5 @@
-from PyQt6.QtWidgets import QWidget, QTextEdit, QVBoxLayout, QLabel, QHBoxLayout, QGridLayout
 from PyQt6 import QtGui
+from PyQt6.QtWidgets import QWidget, QTextEdit, QVBoxLayout, QLabel, QHBoxLayout, QGridLayout
 
 from character.SkillBlockWidget import SkillBlockWidget
 

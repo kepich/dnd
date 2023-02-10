@@ -1,5 +1,5 @@
-from PyQt6.QtWidgets import QWidget, QTextEdit, QVBoxLayout, QLabel
 from PyQt6 import QtGui
+from PyQt6.QtWidgets import QWidget, QTextEdit, QVBoxLayout, QLabel
 
 
 class NotebookWidget(QWidget):

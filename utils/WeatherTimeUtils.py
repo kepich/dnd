@@ -80,7 +80,7 @@ MAX_DARKNESS = 0.90
 
 extraWindDecreaseValues = [-1, 0, 0, 0, 0, 0]
 noWindIncreaseValues = [0, 0, 0, 0, 1]
-windChangeValues = [-1, 0, 0, 1]
+windChangeValues = [-1, -1, 0, 1]
 windDirectionChangingValues = [-1, 0, 0, 1]
 
 noCloudsIncreaseValues = [0, 0, 1]
