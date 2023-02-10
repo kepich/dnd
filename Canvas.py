@@ -119,10 +119,9 @@ class Canvas(QLabel):
                 self.networkProxy.remove(self.objects, delete_candidate)
                 self.redraw()
         elif self.edit_mode is EditMode.MOVE and self.last_draw is not None:
-            # TODO: Здесь можно сделать прилипание к сетке
-            self.networkProxy.moveCumulative(self.last_draw,
-                                             self.camera.abs(self.dx_cumulative),
-                                             self.camera.abs(self.dy_cumulative))
+            self.last_draw.stickToGrid(GRID_STEP)
+            self.networkProxy.moveCumulative(self.last_draw, self.last_draw.q_rect.x(), self.last_draw.q_rect.y())
+            self.redraw()
         elif self.edit_mode is EditMode.RESIZE and self.last_draw is not None:
             self.networkProxy.resizeCumulative(self.last_draw,
                                                self.camera.abs(self.dx_cumulative),
@@ -278,7 +277,7 @@ class Canvas(QLabel):
             self.objects.append(DrawableObject.deserialize(msg.drawableObject))
         elif msg.action is Action.MOVE:
             obj: DrawableObject = self.findObjectByUUID(msg.uuid)
-            obj.move(msg.dx, msg.dy)
+            obj.setPos(msg.dx, msg.dy)
         elif msg.action is Action.RESIZE:
             obj: DrawableObject = self.findObjectByUUID(msg.uuid)
             obj.resize(msg.dx, msg.dy)

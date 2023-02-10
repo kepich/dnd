@@ -34,10 +34,10 @@ class DrawableObject:
         self.pixmap = self.pixmap.copy(self.q_rect)
 
     def move(self, x, y):
-        self.q_rect.setX(self.q_rect.x() + x)
-        self.q_rect.setRight(self.q_rect.right() + x)
-        self.q_rect.setY(self.q_rect.y() + y)
-        self.q_rect.setBottom(self.q_rect.bottom() + y)
+        self.q_rect.translate(x, y)
+
+    def setPos(self, x, y):
+        self.q_rect.moveTo(x, y)
 
     def resize(self, x, y):
         new_w = max(self.MIN_OBJECT_SIZE, self.q_rect.width() + x)
@@ -46,9 +46,8 @@ class DrawableObject:
         self.q_rect.setWidth(new_w)
         self.q_rect.setHeight(new_h)
 
-    def is_collide(self, x, y):
-        return self.q_rect.x() < x < self.q_rect.x() + self.q_rect.width() and \
-            self.q_rect.y() < y < self.q_rect.y() + self.q_rect.height()
+    def isContains(self, x, y):
+        return self.q_rect.contains(x, y)
 
     def serialize(self):
         res = {
@@ -79,3 +78,8 @@ class DrawableObject:
             return f"{self.metadata.name} {self.metadata.hp} HP"
         else:
             return ""
+
+    def stickToGrid(self, gridStep):
+        if self.isEntity():
+            self.q_rect.moveTo(round(self.q_rect.x() / gridStep) * gridStep,
+                               round(self.q_rect.y() / gridStep) * gridStep)

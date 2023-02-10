@@ -73,5 +73,5 @@ class Camera:
             else:
                 environment.append(obj)
 
-        return next(filter(lambda obj: obj.is_collide(self.x_abs(x), self.y_abs(y)), entities),
-                    next(filter(lambda obj: obj.is_collide(self.x_abs(x), self.y_abs(y)), environment), None))
+        return next(filter(lambda obj: obj.isContains(self.x_abs(x), self.y_abs(y)), entities),
+                    next(filter(lambda obj: obj.isContains(self.x_abs(x), self.y_abs(y)), environment), None))
