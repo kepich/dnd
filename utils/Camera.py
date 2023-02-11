@@ -1,7 +1,5 @@
 from PyQt6.QtCore import QRect
 
-from model.DrawableObject import DrawableObject
-
 
 class Camera:
     x_offset = 0

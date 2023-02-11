@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton
 
+from character.MagicWidget import MagicWidget
 from character.NotebookWidget import NotebookWidget
 from character.SkillsWidget import SkillsWidget
 
@@ -17,7 +18,7 @@ class ButtonsWidget(QWidget):
         self.inventoryButton.clicked.connect(self.inventory.show)
 
         self.magicButton = QPushButton("Magic")
-        self.magic = NotebookWidget(name="Magic")
+        self.magic = MagicWidget(name="Magic")
         self.magicButton.clicked.connect(self.magic.show)
 
         self.skillsButton = QPushButton("Skills")
