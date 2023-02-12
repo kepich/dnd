@@ -1,6 +1,8 @@
 import json
 
-from PyQt6.QtWidgets import QWidget, QLineEdit, QScrollArea, QPushButton, QVBoxLayout, QGridLayout, QComboBox, QLabel
+from PyQt6.QtWidgets import QWidget, QScrollArea, QPushButton, QVBoxLayout, QGridLayout, QComboBox
+
+from character.CastWidget import CastWidget
 
 profs = {
 
@@ -13,7 +15,6 @@ class SpellBook(QWidget):
         self.casts = json.load(open('resources/skills.json', encoding="utf8"))
 
         self.profession = QComboBox()
-        # self.profession.addItems([i[0]["class"] for i in self.casts.values()])
         self.profession.addItems(self.casts.keys())
         self.profession.currentTextChanged.connect(self.search)
 
@@ -24,6 +25,7 @@ class SpellBook(QWidget):
         self.tier.currentTextChanged.connect(self.search)
 
         self.scrollArea = QScrollArea()
+        self.scrollArea.setWidgetResizable(True)
         self.page = 0
         self.prevPage = QPushButton("Prev page")
         self.nextPage = QPushButton("Next page")
@@ -37,7 +39,7 @@ class SpellBook(QWidget):
         grid.addWidget(self.nextPage, 2, 1)
 
         self.setLayout(grid)
-
+        self.search()
 
     def search(self):
         # init needed widgets on page
@@ -46,7 +48,17 @@ class SpellBook(QWidget):
         profCasts = self.casts[prof]
         filteredCasts = list(filter(lambda x: x["level"].startswith(tier), profCasts))
 
-        vLayout = QVBoxLayout()
-        self.scrollArea.setLayout(vLayout)
+        widget = QWidget()
+        grid = QGridLayout()
+        widget.setLayout(grid)
+
+        i = 0
+        lineSize = 2
+
         for cast in filteredCasts:
-            vLayout.addWidget(QLabel(str(cast)))
+            castWidget = CastWidget(cast)
+            grid.addWidget(castWidget, i // lineSize, i % lineSize)
+            i += 1
+            print(castWidget.geometry())
+
+        self.scrollArea.setWidget(widget)
