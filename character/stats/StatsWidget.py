@@ -49,7 +49,7 @@ class StateWidget(QWidget):
         self.value.setText(data["value"])
         self.modifier.setText(data["modifier"])
         self.saveThrow.setText(data["saveThrow"])
-        with QSignalBlocker(self.saveThrowModifier) as blocker:
+        with QSignalBlocker(self.saveThrowModifier) as _:
             self.saveThrowModifier.setChecked(data["saveThrowModifier"])
         self.name = data["name"]
 

@@ -1,10 +1,13 @@
 from PyQt6 import QtGui
-from PyQt6.QtWidgets import QWidget, QTextEdit, QVBoxLayout, QLabel
+from PyQt6.QtGui import QWindow
+from PyQt6.QtWidgets import QWidget, QTextEdit, QVBoxLayout, QLabel, QMainWindow
 
 
-class NotebookWidget(QWidget):
+class NotebookWindow(QMainWindow):
     def __init__(self, parent=None, name: str = ""):
         super().__init__(parent)
+
+        self.setWindowTitle(name)
 
         self.data = ""
 
@@ -12,10 +15,7 @@ class NotebookWidget(QWidget):
         self.textEdit.setFixedWidth(600)
         self.textEdit.setFixedHeight(400)
 
-        layout = QVBoxLayout()
-        layout.addWidget(QLabel(name))
-        layout.addWidget(self.textEdit)
-        self.setLayout(layout)
+        self.setCentralWidget(self.textEdit)
 
     def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
         self.data = self.textEdit.toPlainText()

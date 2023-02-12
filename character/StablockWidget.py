@@ -1,7 +1,7 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget, QGridLayout, QLabel
 
-from character.StateWidget import StateWidget
+from character.stats.StatsWidget import StateWidget
 
 
 class StatBlockWidget(QWidget):

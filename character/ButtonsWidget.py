@@ -1,8 +1,8 @@
 from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton
 
-from character.MagicWidget import MagicWidget
-from character.NotebookWidget import NotebookWidget
-from character.SkillsWidget import SkillsWidget
+from character.spells.SpellsWindow import MagicWindow
+from character.notebook.NotebookWindow import NotebookWindow
+from character.skills.SkillsWindow import SkillsWindow
 
 
 class ButtonsWidget(QWidget):
@@ -14,19 +14,19 @@ class ButtonsWidget(QWidget):
         self.setLayout(self.grid)
 
         self.inventoryButton = QPushButton("Inventory")
-        self.inventory = NotebookWidget(name="Inventory")
+        self.inventory = NotebookWindow(self, name="Inventory")
         self.inventoryButton.clicked.connect(self.inventory.show)
 
         self.magicButton = QPushButton("Magic")
-        self.magic = MagicWidget(name="Magic")
+        self.magic = MagicWindow(self, name="Magic")
         self.magicButton.clicked.connect(self.magic.show)
 
         self.skillsButton = QPushButton("Skills")
-        self.skills = SkillsWidget(name="Skills")
+        self.skills = SkillsWindow(self, name="Skills")
         self.skillsButton.clicked.connect(self.skills.show)
 
         self.notebookButton = QPushButton("Notebook")
-        self.notebook = NotebookWidget(name="Notebook")
+        self.notebook = NotebookWindow(self, name="Notebook")
         self.notebookButton.clicked.connect(self.notebook.show)
 
         self.saveCharButton = QPushButton("Save char")
@@ -46,13 +46,13 @@ class ButtonsWidget(QWidget):
     def getData(self):
         return {
             "inventory": self.inventory.getData(),
-            "magic": self.magic.getData(),
+            "spells": self.magic.getData(),
             "skills": self.skills.getData(),
             "notebook": self.notebook.getData()
         }
 
     def setData(self, data: dict):
         self.inventory.setData(data["inventory"])
-        self.magic.setData(data["magic"])
+        self.magic.setData(data["spells"])
         self.skills.setData(data["skills"])
         self.notebook.setData(data["notebook"])

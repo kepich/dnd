@@ -1,10 +1,10 @@
 from PyQt6 import QtGui
-from PyQt6.QtWidgets import QWidget, QTextEdit, QVBoxLayout, QLabel, QHBoxLayout, QGridLayout
+from PyQt6.QtWidgets import QWidget, QTextEdit, QVBoxLayout, QLabel, QHBoxLayout, QGridLayout, QMainWindow
 
-from character.SkillBlockWidget import SkillBlockWidget
+from character.skills.SkillBlockWidget import SkillBlockWidget
 
 
-class SkillsWidget(QWidget):
+class SkillsWindow(QMainWindow):
     def __init__(self, parent=None, name: str = ""):
         super().__init__(parent)
 
@@ -37,7 +37,10 @@ class SkillsWidget(QWidget):
         hLayout.addWidget(self.textEdit)
 
         layout.addLayout(hLayout)
-        self.setLayout(layout)
+
+        centralWidget = QWidget()
+        centralWidget.setLayout(layout)
+        self.setCentralWidget(centralWidget)
 
     def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
         self.data = self.textEdit.toPlainText()

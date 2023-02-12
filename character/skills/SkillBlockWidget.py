@@ -1,7 +1,7 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget, QGridLayout, QLabel
 
-from character.Skill import Skill
+from character.skills.Skill import Skill
 
 
 class SkillBlockWidget(QWidget):

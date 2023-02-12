@@ -1,11 +1,9 @@
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QWidget, QGridLayout, QLabel, QCheckBox
+from PyQt6.QtWidgets import QGridLayout, QLabel, QCheckBox
 
 
-class Skill(QWidget):
-    def __init__(self, gridLayout: QGridLayout, row: int, name: str, parent=None):
-        super().__init__(parent)
-
+class Skill:
+    def __init__(self, gridLayout: QGridLayout, row: int, name: str):
         self.name = QLabel(name)
         self.value = QLabel("0")
         self.modifier = QCheckBox()
