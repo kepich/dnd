@@ -1,8 +1,8 @@
 from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton
 
-from character.spells.SpellsWindow import MagicWindow
 from character.notebook.NotebookWindow import NotebookWindow
 from character.skills.SkillsWindow import SkillsWindow
+from character.spells.SpellsWindow import MagicWindow
 
 
 class ButtonsWidget(QWidget):

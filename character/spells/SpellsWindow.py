@@ -1,8 +1,8 @@
 from PyQt6 import QtGui
 from PyQt6.QtWidgets import QWidget, QTextEdit, QVBoxLayout, QLabel, QScrollArea, QHBoxLayout, QPushButton, QMainWindow
 
-from character.spells.SpellWidget import CastWidget
 from character.spells.SpellBookWindow import SpellBookWindow
+from character.spells.SpellWidget import CastWidget
 
 
 class MagicWindow(QMainWindow):
