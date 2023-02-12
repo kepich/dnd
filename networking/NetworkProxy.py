@@ -58,4 +58,3 @@ class NetworkProxy:
 
     def sendLoad(self, data):
         self.socketClient.sendLoad(data)
-

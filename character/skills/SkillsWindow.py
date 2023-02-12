@@ -1,12 +1,14 @@
 from PyQt6 import QtGui
-from PyQt6.QtWidgets import QWidget, QTextEdit, QVBoxLayout, QLabel, QHBoxLayout, QGridLayout, QMainWindow
+from PyQt6.QtWidgets import QWidget, QTextEdit, QVBoxLayout, QHBoxLayout, QGridLayout, QMainWindow
 
 from character.skills.SkillBlockWidget import SkillBlockWidget
 
 
 class SkillsWindow(QMainWindow):
-    def __init__(self, parent=None, name: str = ""):
+    def __init__(self, parent=None):
         super().__init__(parent)
+
+        self.setWindowTitle("Skills")
 
         self.data = ""
         self.skills = {
@@ -18,7 +20,6 @@ class SkillsWindow(QMainWindow):
         }
 
         layout = QVBoxLayout()
-        layout.addWidget(QLabel(name))
 
         hLayout = QHBoxLayout()
 

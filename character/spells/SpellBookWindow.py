@@ -1,7 +1,7 @@
 import json
 
 from PyQt6.QtCore import pyqtSignal
-from PyQt6.QtWidgets import QWidget, QScrollArea, QGridLayout, QComboBox, QMainWindow
+from PyQt6.QtWidgets import QWidget, QScrollArea, QGridLayout, QComboBox, QLineEdit
 
 from character.spells.SpellWidget import CastWidget
 
@@ -20,13 +20,17 @@ profs = {
 profsInverted = {v: k for k, v in profs.items()}
 
 
-class SpellBookWindow(QMainWindow):
+class SpellBookWindow(QWidget):
     addRemoveSignal = pyqtSignal(dict)
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setWindowTitle("Spell book")
 
         self.casts = json.load(open('resources/skills.json', encoding="utf8"))
+
+        self.name = QLineEdit()
+        self.name.textChanged.connect(self.search)
 
         self.profession = QComboBox()
         self.profession.addItems(list(map(lambda key: profs[key], self.casts.keys())))
@@ -39,27 +43,26 @@ class SpellBookWindow(QMainWindow):
         self.tier.currentTextChanged.connect(self.search)
 
         self.scrollArea = QScrollArea()
-        self.scrollArea.setMinimumWidth(1250)
-        self.scrollArea.setMinimumHeight(700)
+
         self.scrollArea.horizontalScrollBar().setEnabled(False)
 
         grid = QGridLayout()
 
-        grid.addWidget(self.profession, 0, 0)
-        grid.addWidget(self.tier, 0, 1)
-        grid.addWidget(self.scrollArea, 1, 0, 1, 2)
+        grid.addWidget(self.name, 0, 0)
+        grid.addWidget(self.profession, 0, 1)
+        grid.addWidget(self.tier, 0, 2)
+        grid.addWidget(self.scrollArea, 1, 0, 1, 3)
 
-        centralWidget = QWidget()
-        centralWidget.setLayout(grid)
-        self.setCentralWidget(centralWidget)
+        self.setLayout(grid)
 
         self.search()
 
     def search(self):
-        prof = profsInverted[self.profession.currentText()]
         tier = self.tier.currentText()
-        profCasts = self.casts[prof]
+        profCasts = self.casts[profsInverted[self.profession.currentText()]]
+        name = self.name.text()
         filteredCasts = list(filter(lambda x: x["level"].startswith(tier), profCasts))
+        filteredCasts = list(filter(lambda x: name in x["name"], filteredCasts))
 
         widget = QWidget()
         grid = QGridLayout()

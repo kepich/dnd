@@ -21,12 +21,11 @@ class CastWidget(QWidget):
             self.addButton.clicked.connect(lambda: self.addSignal.emit(self.castInfo))
 
         grid = QGridLayout()
-        grid.setColumnStretch(5, 1)
         grid.addWidget(QLabel(f'<b>{castInfo["name"]}</b>'), 0, 0,
                        alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         grid.addWidget(QLabel(f'<i>{castInfo["level"]}</i>'), 0, 1,
                        alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
-        grid.addWidget(self.addButton, 0, 2, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+        grid.addWidget(self.addButton, 0, 2, alignment=Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
 
         castTime = QLabel(f"<b>Casting time:</b> {castInfo['castingTime']}")
         castTime.setMinimumWidth(200)
@@ -47,7 +46,7 @@ class CastWidget(QWidget):
 
         desc = QLabel(f"<b>Description:</b> {castInfo['description']}")
         desc.setWordWrap(True)
-        grid.addWidget(desc, 4, 0, 1, 3, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+        grid.addWidget(desc, 4, 0, 1, 4, alignment=Qt.AlignmentFlag.AlignTop)
         grid.setRowStretch(5, 1)
 
         self.setLayout(grid)

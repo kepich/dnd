@@ -9,17 +9,17 @@ from model.Metadata import Metadata
 
 
 class SocketClient(QThread):
-    receivedSignal              = pyqtSignal(Message)
+    receivedSignal = pyqtSignal(Message)
     connectionEstablishedSignal = pyqtSignal()
-    connectionRejectedSignal    = pyqtSignal()
-    playerJoinSignal            = pyqtSignal(str)
-    playerLeaveSignal           = pyqtSignal(str)
-    chatSignal                  = pyqtSignal(list)
-    needFirstLoadSignal         = pyqtSignal()
-    weatherTimeSignal           = pyqtSignal(dict)
-    masterFirstLoadSignal       = pyqtSignal()
-    caveDarknessSignal          = pyqtSignal(bool)
-    loadSignal                  = pyqtSignal(dict)
+    connectionRejectedSignal = pyqtSignal()
+    playerJoinSignal = pyqtSignal(str)
+    playerLeaveSignal = pyqtSignal(str)
+    chatSignal = pyqtSignal(list)
+    needFirstLoadSignal = pyqtSignal()
+    weatherTimeSignal = pyqtSignal(dict)
+    masterFirstLoadSignal = pyqtSignal()
+    caveDarknessSignal = pyqtSignal(bool)
+    loadSignal = pyqtSignal(dict)
 
     sio = socketio.Client()
 

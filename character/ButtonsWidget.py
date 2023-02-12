@@ -18,11 +18,11 @@ class ButtonsWidget(QWidget):
         self.inventoryButton.clicked.connect(self.inventory.show)
 
         self.magicButton = QPushButton("Magic")
-        self.magic = MagicWindow(self, name="Magic")
+        self.magic = MagicWindow(self)
         self.magicButton.clicked.connect(self.magic.show)
 
         self.skillsButton = QPushButton("Skills")
-        self.skills = SkillsWindow(self, name="Skills")
+        self.skills = SkillsWindow(self)
         self.skillsButton.clicked.connect(self.skills.show)
 
         self.notebookButton = QPushButton("Notebook")
