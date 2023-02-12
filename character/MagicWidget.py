@@ -3,6 +3,8 @@ import json
 from PyQt6 import QtGui
 from PyQt6.QtWidgets import QWidget, QTextEdit, QVBoxLayout, QLabel, QScrollArea, QHBoxLayout, QPushButton
 
+from character.SpellBook import SpellBook
+
 
 class MagicWidget(QWidget):
     def __init__(self, parent=None, name: str = ""):
@@ -10,11 +12,8 @@ class MagicWidget(QWidget):
 
         self.data = ""
 
-        f = open('resources/skills.json', encoding="utf8")
-        casts = json.load(f)
-
         self.textEdit = QTextEdit()
-        self.textEdit.setText(str(casts))
+        # self.textEdit.setText(str(casts))
 
         self.scrollAreaLeft = QScrollArea()
         vLayoutL = QVBoxLayout()
@@ -23,6 +22,8 @@ class MagicWidget(QWidget):
         self.scrollAreaRight = QScrollArea()
         vLayoutR = QVBoxLayout()
         self.spellBookButton = QPushButton("Spell book")
+        self.spellBook = SpellBook()
+        self.spellBookButton.pressed.connect(lambda: self.spellBook.show())
         vLayoutR.addWidget(self.spellBookButton)
         vLayoutR.addWidget(self.textEdit)
         self.scrollAreaRight.setLayout(vLayoutR)
