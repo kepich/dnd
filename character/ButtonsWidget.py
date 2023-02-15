@@ -10,6 +10,7 @@ class ButtonsWidget(QWidget):
         super().__init__(parent)
 
         self.grid = QGridLayout()
+        self.grid.setVerticalSpacing(0)
         self.grid.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.grid)
 

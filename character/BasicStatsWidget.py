@@ -30,6 +30,14 @@ class BasicStatsWidget(QWidget):
         self.hp.setValidator(QIntValidator(0, 1000, self))
         self.hp.setFixedWidth(45)
 
+        self.maxHp = QLineEdit()
+        self.maxHp.setValidator(QIntValidator(0, 1000, self))
+        self.maxHp.setFixedWidth(45)
+
+        self.tempHp = QLineEdit()
+        self.tempHp.setValidator(QIntValidator(0, 1000, self))
+        self.tempHp.setFixedWidth(45)
+
         self.hpDice = QLineEdit()
         self.hpDice.setFixedWidth(45)
 
@@ -41,13 +49,17 @@ class BasicStatsWidget(QWidget):
         self.grid.addWidget(self.armorClass, 0, 3, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         self.grid.addWidget(QLabel("HP:"), 1, 0, alignment=Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
         self.grid.addWidget(self.hp, 1, 1, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
-        self.grid.addWidget(QLabel("HP Dice:"), 1, 2, alignment=Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
-        self.grid.addWidget(self.hpDice, 1, 3, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
-        self.grid.addWidget(QLabel("Init:"), 2, 0, alignment=Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
-        self.grid.addWidget(self.initiative, 2, 1, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
-        self.grid.addWidget(QLabel("Speed:"), 2, 2, alignment=Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
-        self.grid.addWidget(self.speed, 2, 3, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
-        self.grid.addWidget(buttons, 3, 0, 1, 4, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+        self.grid.addWidget(QLabel("Max HP:"), 1, 2, alignment=Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
+        self.grid.addWidget(self.maxHp, 1, 3, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+        self.grid.addWidget(QLabel("Temp HP:"), 2, 0, alignment=Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
+        self.grid.addWidget(self.tempHp, 2, 1, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+        self.grid.addWidget(QLabel("HP Dice:"), 2, 2, alignment=Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
+        self.grid.addWidget(self.hpDice, 2, 3, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+        self.grid.addWidget(QLabel("Init:"), 3, 0, alignment=Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
+        self.grid.addWidget(self.initiative, 3, 1, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+        self.grid.addWidget(QLabel("Speed:"), 3, 2, alignment=Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
+        self.grid.addWidget(self.speed, 3, 3, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+        self.grid.addWidget(buttons, 4, 0, 1, 4, alignment=Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
 
     def updateProficiencyBonus(self, profBonus: int):
         self.profBonus.setText(str(profBonus))
@@ -58,6 +70,8 @@ class BasicStatsWidget(QWidget):
             "initiative": self.initiative.text(),
             "speed": self.speed.text(),
             "hp": self.hp.text(),
+            "maxHp": self.maxHp.text(),
+            "tempHp": self.tempHp.text(),
             "hpDice": self.hpDice.text(),
             "profBonus": self.profBonus.text()
         }
@@ -67,5 +81,7 @@ class BasicStatsWidget(QWidget):
         self.initiative.setText(data["initiative"])
         self.speed.setText(data["speed"])
         self.hp.setText(data["hp"])
+        self.tempHp.setText(data["tempHp"])
+        self.maxHp.setText(data["maxHp"])
         self.hpDice.setText(data["hpDice"])
         self.profBonus.setText(data["profBonus"])
