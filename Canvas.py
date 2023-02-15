@@ -1,7 +1,8 @@
 from PyQt6.QtCore import Qt, QPoint
 from PyQt6.QtGui import QColor, QPainter, QWheelEvent
-from PyQt6.QtWidgets import QLabel, QApplication, QSizePolicy
+from PyQt6.QtWidgets import QLabel, QApplication, QSizePolicy, QMenu
 
+from dialog.TakeDamageDialog import TakeDamageDialog
 from model.Message import Message
 from model.Metadata import Metadata
 from networking.Action import Action
@@ -105,6 +106,19 @@ class Canvas(QLabel):
     def fovMovingAction(self, e):
         self.camera.updateOffsets(e.position().x() - self.last_x, e.position().y() - self.last_y)
         self.redraw()
+
+    def contextMenuEvent(self, event):
+        menu = QMenu(self)
+        menu_candidate = self.camera.getCollide(event.pos().x(), event.pos().y(), self.objects)
+        if menu_candidate is not None and menu_candidate.isEntity():
+            takeDamageAction = menu.addAction("Take damage")
+            if takeDamageAction == menu.exec(self.mapToGlobal(event.pos())):
+                dlg = TakeDamageDialog()
+                if dlg.exec():
+                    damage = int(dlg.damageTextBox.text())
+                    menu_candidate.metadata.hp = int(menu_candidate.metadata.hp) - damage
+                    self.networkProxy.updateMeta(menu_candidate.metadata)
+                    self.redraw()
 
     def mouseReleaseEvent(self, e):
         if self.edit_mode is EditMode.DRAW and self.last_draw is not None:

@@ -6,8 +6,10 @@ from transliterate import translit
 from Playground import Playground
 from dialog.EnterDialog import EnterDialog
 from dialog.LoadDialog import LoadDialog
+from dialog.LoadNpcDialog import LoadNpcDialog
 from dialog.LoadSceneDialog import LoadSceneDialog
 from dialog.SaveDialog import SaveDialog
+from model.Metadata import Metadata
 from networking.SocketClient import SocketClient
 from toolbar.EditMode import EditMode
 from utils.SaveManager import SaveManager
@@ -44,6 +46,7 @@ class ClientWindow(QMainWindow):
         tool_bar.addAction(self.loadAction)
         tool_bar.addAction(self.saveSceneAction)
         tool_bar.addAction(self.loadSceneAction)
+        tool_bar.addAction(self.loadNpcAction)
         tool_bar.addSeparator()
         tool_bar.addAction(self.exitAction)
 
@@ -99,6 +102,10 @@ class ClientWindow(QMainWindow):
         self.loadSceneAction = QWidgetAction(self)
         self.loadSceneAction.setText("Load scene")
         self.loadSceneAction.triggered.connect(self.loadSceneSlot)
+
+        self.loadNpcAction = QWidgetAction(self)
+        self.loadNpcAction.setText("Load NPC")
+        self.loadNpcAction.triggered.connect(self.loadNpcSlot)
 
         self.exitAction = QWidgetAction(self)
         self.exitAction.setText("Exit")
@@ -211,6 +218,15 @@ class ClientWindow(QMainWindow):
             loadedData = self.saveManager.loadScene(dlg.getChosenSave())
             self.playground.restoreGame(loadedData)
             self.playground.canvas.networkProxy.sendLoad(loadedData)
+
+    def loadNpcSlot(self):
+        dlg = LoadNpcDialog(self)
+        if dlg.exec():
+            loadedData = self.saveManager.loadCharacter(dlg.getChosenCharacter())
+            self.playground.canvas.createEntityWithMetadata(loadedData["info"]["pixmap"].pixmap,
+                                                            Metadata(True,
+                                                                     loadedData["basicStats"]["hp"],
+                                                                     dlg.nameOfNpc.text()))
 
     def keyPressEvent(self, ev: QKeyEvent) -> None:
         if ev.modifiers() & Qt.KeyboardModifier.ControlModifier:
