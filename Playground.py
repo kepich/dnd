@@ -61,3 +61,8 @@ class Playground(QWidget):
             self.rightPanel.timeWidget.setCurrentTimeData(data["weatherTime"])
 
         self.rightPanel.setCaveDarkness(data["canvas"]["isCave"])
+
+    def connect(self, socketClient):
+        self.canvas.objects.clear()
+        self.canvas.redraw()
+        self.canvas.networkProxy.connect(socketClient)

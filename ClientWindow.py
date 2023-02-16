@@ -148,7 +148,7 @@ class ClientWindow(QMainWindow):
             socketClient = SocketClient(dlg.addressTextBox.text(),
                                         dlg.portTextBox.text(),
                                         translit(dlg.nicknameTextBox.text(), language_code="ru", reversed=True))
-            self.playground.canvas.networkProxy.connect(socketClient)
+            self.playground.connect(socketClient)
             self.connectSocketSignals(socketClient)
             self.playground.rightPanel.chatWidget.name = dlg.nicknameTextBox.text()
             self.playground.rightPanel.chatWidget.clearChat()

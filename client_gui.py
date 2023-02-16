@@ -1,4 +1,5 @@
 import sys
+import traceback
 
 from PyQt6.QtWidgets import QApplication
 
@@ -8,9 +9,12 @@ from ClientWindow import ClientWindow
 def run():
     app = QApplication([])
 
-    window = ClientWindow()
+    try:
+        window = ClientWindow()
+        window.show()
+    except:
+        traceback.print_exc()
 
-    window.show()
     sys.exit(app.exec())
 
 
