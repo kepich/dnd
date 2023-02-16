@@ -138,8 +138,8 @@ class Canvas(QLabel):
             self.redraw()
         elif self.edit_mode is EditMode.RESIZE and self.last_draw is not None:
             self.networkProxy.resizeCumulative(self.last_draw,
-                                               self.camera.abs(self.dx_cumulative),
-                                               self.camera.abs(self.dy_cumulative))
+                                               self.last_draw.q_rect.width(),
+                                               self.last_draw.q_rect.height())
 
         self.last_x = None
         self.last_y = None
@@ -299,7 +299,7 @@ class Canvas(QLabel):
             obj.setPos(msg.dx, msg.dy)
         elif msg.action is Action.RESIZE:
             obj: DrawableObject = self.findObjectByUUID(msg.uuid)
-            obj.resize(msg.dx, msg.dy)
+            obj.setSize(msg.dx, msg.dy)
         elif msg.action is Action.REMOVE:
             obj: DrawableObject = self.findObjectByUUID(msg.uuid)
             self.objects.remove(obj)

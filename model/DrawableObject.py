@@ -39,6 +39,10 @@ class DrawableObject:
     def setPos(self, x, y):
         self.q_rect.moveTo(x, y)
 
+    def setSize(self, width, height):
+        self.q_rect.setWidth(width)
+        self.q_rect.setHeight(height)
+
     def resize(self, x, y):
         new_w = max(self.MIN_OBJECT_SIZE, self.q_rect.width() + x)
         new_h = max(self.MIN_OBJECT_SIZE, self.q_rect.height() + y)
