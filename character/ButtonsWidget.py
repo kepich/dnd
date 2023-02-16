@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton
 
+from character.inventory.InventoryWindow import InventoryWindow
 from character.notebook.NotebookWindow import NotebookWindow
 from character.skills.SkillsWindow import SkillsWindow
 from character.spells.SpellsWindow import MagicWindow
@@ -15,7 +16,7 @@ class ButtonsWidget(QWidget):
         self.setLayout(self.grid)
 
         self.inventoryButton = QPushButton("Inventory")
-        self.inventory = NotebookWindow(self, name="Inventory")
+        self.inventory = InventoryWindow(self)
         self.inventoryButton.clicked.connect(self.inventory.show)
 
         self.magicButton = QPushButton("Magic")

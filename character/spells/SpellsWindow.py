@@ -9,8 +9,6 @@ class MagicWindow(QMainWindow):
         super().__init__(parent)
         self.setWindowTitle("Magic")
 
-        self.mySpells = []
-
         self.setMinimumWidth(1250)
         self.setMinimumHeight(700)
 
