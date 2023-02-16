@@ -73,6 +73,7 @@ class InfoWidget(QWidget):
             self.pixmap = SaveManager().loadPixmapFromFile(file[0])
 
             pixmap = QPixmap(100, 100)
+            pixmap.fill(Qt.GlobalColor.transparent)
             painter = QPainter(pixmap)
 
             painter.begin(pixmap)

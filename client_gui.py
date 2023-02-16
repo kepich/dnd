@@ -19,4 +19,8 @@ def run():
 
 
 if __name__ == '__main__':
-    run()
+    try:
+        run()
+    except:
+        # printing stack trace
+        traceback.print_exc()

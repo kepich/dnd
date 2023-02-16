@@ -225,7 +225,8 @@ class ClientWindow(QMainWindow):
             loadedData = self.saveManager.loadCharacter(dlg.getChosenCharacter())
             self.playground.canvas.createEntityWithMetadata(loadedData["info"]["pixmap"].pixmap,
                                                             Metadata(True,
-                                                                     loadedData["basicStats"]["hp"],
+                                                                     0 if loadedData["basicStats"]["hp"] == "" else int(
+                                                                         loadedData["basicStats"]["hp"]),
                                                                      dlg.nameOfNpc.text()))
 
     def keyPressEvent(self, ev: QKeyEvent) -> None:
